@@ -87,7 +87,7 @@ merged.save_pretrained(OUT)
 ## Screenshots (with DeafBlind-Standard Alt Text)
 
 ### Training Run
-![Training run screenshot](images/training_run.png)
+![Training run screenshot](images/train.png)
 **Alt Text (DeafBlind Standard):**  
 A terminal window showing a QLoRA training session for Qwen2.5‑3B.  
 The screen displays progress bars, step counts, and loss values decreasing over time.  
@@ -100,7 +100,7 @@ The terminal also shows ROCm warnings about hipBLAS fallback, which do not inter
 Overall, the screenshot communicates that the model is training successfully on AMD hardware.
 
 ### Model Output (Inference Test)
-![Model output screenshot](images/model_output.png)
+![Model output screenshot](images/output.png)
 **Alt Text (DeafBlind Standard):**  
 A Python REPL window showing the model loaded with the trained LoRA adapter.  
 The user enters the prompt: “Explain spoon theory in simple terms.”  
