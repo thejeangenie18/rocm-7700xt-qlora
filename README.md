@@ -84,13 +84,30 @@ merged = model.merge_and_unload()
 merged.save_pretrained(OUT)
 ```
 
-## Screenshots
-- `images/train.png`
-- `images/output.png`
+## Screenshots (with DeafBlind-Standard Alt Text)
 
-### Alt text
-- Training run screenshot: terminal output showing progress bars, step counts, loss trending down, and ROCm warnings that do not interrupt training.
-- Model output screenshot: Python REPL showing the trained adapter loaded successfully and a coherent explanation of Spoon Theory.
+### Training Run
+![Training run screenshot](images/training_run.png)
+**Alt Text (DeafBlind Standard):**  
+A terminal window showing a QLoRA training session for Qwen2.5‑3B.  
+The screen displays progress bars, step counts, and loss values decreasing over time.  
+Key metrics include:  
+- trainable parameters around 29.9 million  
+- total parameters around 3.1 billion  
+- loss values trending downward (for example: 2.50 → 1.59 → 0.62 → 0.17)  
+- training steps progressing from 0/200 to 200/200  
+The terminal also shows ROCm warnings about hipBLAS fallback, which do not interrupt training.  
+Overall, the screenshot communicates that the model is training successfully on AMD hardware.
+
+### Model Output (Inference Test)
+![Model output screenshot](images/model_output.png)
+**Alt Text (DeafBlind Standard):**  
+A Python REPL window showing the model loaded with the trained LoRA adapter.  
+The user enters the prompt: “Explain spoon theory in simple terms.”  
+The model responds with a clear, accessible explanation of Spoon Theory, describing spoons as units of energy used by people with chronic illness to manage daily tasks.  
+The output demonstrates that the fine‑tuned model is generating coherent, disability‑aware responses.  
+The screenshot confirms that the adapter loads correctly and inference works as expected.
+
 
 ## License
 MIT for repository code.
