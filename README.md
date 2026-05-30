@@ -16,7 +16,7 @@ A lightweight, AMD-friendly QLoRA training pipeline for fine-tuning **Qwen/Qwen2
 - 12GB VRAM minimum
 - 16GB RAM recommended
 
-- ## System Requirements
+## System Requirements
 This pipeline is tested and verified on AMD RDNA3 hardware using ROCm 6.x.  
 ROCm is sensitive to kernel and OS versions, so matching these is important for reproducibility.
 
