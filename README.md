@@ -16,6 +16,51 @@ A lightweight, AMD-friendly QLoRA training pipeline for fine-tuning **Qwen/Qwen2
 - 12GB VRAM minimum
 - 16GB RAM recommended
 
+- ## System Requirements
+This pipeline is tested and verified on AMD RDNA3 hardware using ROCm 6.x.  
+ROCm is sensitive to kernel and OS versions, so matching these is important for reproducibility.
+
+### Supported Operating Systems
+- Ubuntu 24.04 LTS (Noble) — recommended
+- Ubuntu 22.04 LTS (Jammy) — supported with ROCm 6.x
+- Other distros: not officially supported by AMD for ROCm
+
+### Required Kernel Versions
+ROCm 6.x requires a kernel in the **6.8.x** series for stable RDNA3 support.
+
+Verified working kernels:
+- `6.8.0-49-generic`
+- `6.8.0-50-generic`
+
+Not recommended:
+- 7.x kernels (ROCm DKMS modules fail to build)
+- 5.x kernels (missing RDNA3 support)
+
+### Required ROCm Version
+- ROCm **6.1** or **6.2** recommended
+- ROCm 6.0 works but has instability with RDNA3
+- ROCm 5.x does *not* support RDNA3 GPUs
+
+### GPU Support
+- RDNA3 (gfx1100, gfx1101, gfx1102)
+- Tested specifically on **Radeon RX 7700 XT (gfx1101)**
+
+## Verified Build Information
+| Component        | Value                                   |
+|------------------|-------------------------------------------|
+| GPU              | AMD Radeon RX 7700 XT (gfx1101)          |
+| ROCm Version     | 6.1                                       |
+| OS               | Ubuntu 24.04.4 LTS (Noble)                |
+| Kernel Version   | 6.8.0-49-generic                          |
+| Python Version   | 3.11.x                                    |
+| PyTorch Build    | ROCm-enabled PyTorch (from rocm repo)     |
+| VRAM             | 12 GB                                     |
+| RAM              | 32 GB                                     |
+| Storage          | NVMe SSD                                  |
+| Virtual Env      | venv (Python 3.11)                        |
+
+---
+
 Install dependencies:
 
 ```bash
