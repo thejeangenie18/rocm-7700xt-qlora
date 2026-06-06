@@ -22,7 +22,7 @@ This repository is designed for **local‑first**, **reproducible**, **12GB‑VR
 ## Requirements
 - AMD GPU with RDNA3 architecture (gfx1100/1101/1102)
 - ROCm 6.1 or 6.2
-- Python 3.10–3.11
+- Python 3.10
 - 12GB VRAM minimum
 - 16GB RAM recommended
 
@@ -67,12 +67,12 @@ Not recommended:
 | ROCm Version     | 6.1                                       |
 | OS               | Ubuntu 24.04.4 LTS (Noble)                |
 | Kernel Version   | 6.8.0-49-generic                          |
-| Python Version   | 3.11.x                                    |
+| Python Version   | 3.10.x                                    |
 | PyTorch Build    | ROCm-enabled PyTorch (from rocm repo)     |
 | VRAM             | 12 GB                                     |
 | RAM              | 32 GB                                     |
 | Storage          | NVMe SSD                                  |
-| Virtual Env      | venv (Python 3.11)                        |
+| Virtual Env      | venv (Python 3.10)                        |
 
 ---
 

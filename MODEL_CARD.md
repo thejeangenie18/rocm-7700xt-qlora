@@ -43,7 +43,7 @@ settings used to stabilize QLoRA training on RDNA3 GPUs.
 - 16GB system RAM recommended
 
 ### Software
-- Python 3.10–3.11  
+- Python 3.10.X  
 - `transformers`  
 - `peft`  
 - `datasets`  
