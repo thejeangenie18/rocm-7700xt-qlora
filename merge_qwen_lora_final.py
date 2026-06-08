@@ -26,32 +26,46 @@ print("Loading tokenizer…")
 tok = AutoTokenizer.from_pretrained(BASE, trust_remote_code=True)
 tok.pad_token = tok.eos_token
 
+# -----------------------------
+# LOAD BASE MODEL (CPU, BF16 SAFE)
+# -----------------------------
 print("Loading sharded base model on CPU…")
 base = AutoModelForCausalLM.from_pretrained(
     BASE,
-    torch_dtype=torch.float16,
+    torch_dtype=torch.bfloat16,   # RDNA3-native
     device_map=None,
     trust_remote_code=True
 )
 
+# -----------------------------
+# LOAD LORA ADAPTER
+# -----------------------------
 print("Loading LoRA adapter on CPU…")
 model = PeftModel.from_pretrained(
     base,
     ADAPTER,
-    torch_dtype=torch.float16,
+    torch_dtype=torch.bfloat16,
     local_files_only=True
 )
 
+# -----------------------------
+# MERGE
+# -----------------------------
 print("Merging LoRA into base model…")
 merged = model.merge_and_unload()
 
+# -----------------------------
+# SAVE MERGED MODEL
+# -----------------------------
 print("Saving merged model as a single safetensors file…")
 merged.save_pretrained(OUT, safe_serialization=True)
 tok.save_pretrained(OUT)
 
 print("Verifying merge…")
 
-# Find base model shards
+# -----------------------------
+# VERIFY MERGE AGAINST SHARDS
+# -----------------------------
 cache_root = os.path.expanduser(
     "~/.cache/huggingface/hub/models--Qwen--Qwen2.5-3B-Instruct/snapshots"
 )
@@ -64,10 +78,8 @@ snapshot = snapshots[0]
 base_shards = sorted(glob(f"{snapshot}/model-*.safetensors"))
 merged_path = f"{OUT}/model.safetensors"
 
-# Load merged model
 merged_weights = load_file(merged_path)
 
-# Compare against each shard
 diffs = 0
 total = 0
 

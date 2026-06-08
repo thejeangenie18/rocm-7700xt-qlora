@@ -24,21 +24,27 @@ print("Loading tokenizer…")
 tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token
 
-print(f"Loading merged model on {device} (fp16 weights)…")
+print(f"Loading merged model on {device} (bf16 compute)…")
 model = AutoModelForCausalLM.from_pretrained(
     MODEL,
-    torch_dtype=torch.float16,
+    torch_dtype=torch.bfloat16,   # RDNA3-native
     device_map={"": device},
     trust_remote_code=True,
 )
 
 model.eval()
 
+# -----------------------------
+# PROMPT FORMATTER (JSONL STYLE)
+# -----------------------------
 def format_instruction(instruction: str) -> str:
     escaped = instruction.replace('"', '\\"')
     return f'{{"instruction": "{escaped}", "input": "", "output": "'
 
 
+# -----------------------------
+# CHAT FUNCTION
+# -----------------------------
 def chat(prompt: str, max_new_tokens: int = 256) -> str:
     text = format_instruction(prompt)
     inputs = tokenizer(text, return_tensors="pt").to(device)
@@ -55,6 +61,7 @@ def chat(prompt: str, max_new_tokens: int = 256) -> str:
 
     decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
+    # Extract only the model's output field
     if '"output": "' in decoded:
         decoded = decoded.split('"output": "', 1)[-1]
 
@@ -64,6 +71,9 @@ def chat(prompt: str, max_new_tokens: int = 256) -> str:
     return decoded.strip()
 
 
+# -----------------------------
+# INTERACTIVE LOOP
+# -----------------------------
 if __name__ == "__main__":
     print("Merged instruction-tuned model ready (JSONL format).\n")
     while True:

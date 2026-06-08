@@ -22,6 +22,7 @@ os.environ["HSA_ENABLE_SDMA"] = "1"
 os.environ["ROCM_FORCE_ENABLE_DP"] = "1"
 torch.backends.cuda.matmul.allow_tf32 = True
 
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--model", required=True)
@@ -34,10 +35,10 @@ def main():
     tok = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
     tok.pad_token = tok.eos_token
 
-    print("Loading base model on CPU (fp16 weights)…")
+    print("Loading base model on CPU (bf16 compute)…")
     model = AutoModelForCausalLM.from_pretrained(
         args.model,
-        torch_dtype=torch.float16,
+        torch_dtype=torch.bfloat16,   # RDNA3-native
         device_map={"": device},
         trust_remote_code=True,
     )
@@ -47,7 +48,7 @@ def main():
         model = PeftModel.from_pretrained(
             model,
             args.adapter,
-            torch_dtype=torch.float16,
+            torch_dtype=torch.bfloat16,
             device_map={"": device},
         )
 
@@ -71,6 +72,7 @@ def main():
         print("Backward pass OK")
 
     print("Smoke test completed successfully.")
+
 
 if __name__ == "__main__":
     main()

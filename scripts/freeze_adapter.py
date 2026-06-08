@@ -13,7 +13,7 @@ RELEASES = Path("./releases")
 RELEASES.mkdir(exist_ok=True)
 
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-release_dir = RELEASES / f"adapter_v0.1_demo_{timestamp}"
+release_dir = RELEASES / f"adapter_v1.0_{timestamp}"
 release_dir.mkdir()
 
 # -----------------------------
@@ -23,6 +23,16 @@ files = [
     "adapter_model.safetensors",
     "adapter_config.json"
 ]
+
+# -----------------------------
+# Validate source files exist
+# -----------------------------
+missing = [f for f in files if not (SOURCE / f).exists()]
+if missing:
+    raise FileNotFoundError(
+        f"❌ Missing adapter files: {missing}\n"
+        f"Expected in: {SOURCE}"
+    )
 
 # -----------------------------
 # Copy files
@@ -35,7 +45,7 @@ for fname in files:
 # -----------------------------
 # Hash function
 # -----------------------------
-def sha256(path):
+def sha256(path: Path) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
         h.update(f.read())
@@ -45,18 +55,21 @@ def sha256(path):
 # Write manifest
 # -----------------------------
 manifest = release_dir / "MANIFEST.json"
-manifest.write_text(
-    json.dumps(
-        {
-            "version": "v0.1-demo",
-            "timestamp": timestamp,
-            "files": {
-                fname: sha256(release_dir / fname)
-                for fname in files
-            }
-        },
-        indent=4
-    )
-)
+
+manifest_data = {
+    "version": "v1.0",
+    "timestamp": timestamp,
+    "source_dir": str(SOURCE),
+    "release_dir": str(release_dir),
+    "files": {
+        fname: {
+            "sha256": sha256(release_dir / fname),
+            "size_bytes": (release_dir / fname).stat().st_size
+        }
+        for fname in files
+    }
+}
+
+manifest.write_text(json.dumps(manifest_data, indent=4))
 
 print(f"[FROZEN] Adapter frozen at: {release_dir}")
