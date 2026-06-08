@@ -112,6 +112,7 @@ Triton does not emit `S_WAITCNT_VSCNT null, 0` → **stores not visible across k
 - Wave64 kernels run at half speed due to VOPD no‑ops
 - SMEM descriptor loads return stale values
 - LDS tile loads collapse to 1/32 throughput
+
 **All of these disappear when using ROCm’s native kernels** (rocBLAS, hipBLAS, MIOpen).
 
 ### 11. Known‑Working RDNA3‑Safe Path
