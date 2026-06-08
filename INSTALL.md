@@ -132,13 +132,13 @@ pip install transformers accelerate datasets sentencepiece
 pip install peft
 ```
 
-### Install bitsandbytes (ROCm fork)
+### Install Quanto (ROCm‑safe 4‑bit quantization)
 ```bash
-pip install git+https://github.com/ROCm/bitsandbytes.git
+pip install "quanto>=0.2.0"
 ```
 
 ### Install Unsloth (Optional)
-To avoid overwriting ROCm PyTorch with CUDA wheels, install Unsloth without extras:
+Unsloth can accelerate QLoRA training, but must be installed **without CUDA extras** to avoid overwriting ROCm PyTorch.
 
 ```bash
 pip install unsloth
@@ -207,12 +207,8 @@ If this runs without errors, your environment is ready.
 
 ## 10. RDNA3 Notes
 - ROCm 6.1 includes major RDNA3 improvements.
-- Some QLoRA kernels require patched bitsandbytes.
+- This pipeline uses Quanto 4‑bit quantization, which is fully compatible with ROCm and RDNA3. BitsAndBytes is not used because its CUDA/Triton kernels are incompatible with AMD GPUs.
 - The RDNA3 inference fix significantly improves stability.
-- If training stalls, check:
-  - hipBLASLt warnings
-  - mismatched PyTorch wheels
-  - missing ROCm libraries
 
 ---
 
@@ -223,14 +219,10 @@ If this runs without errors, your environment is ready.
 - Ensure `torch.version.hip` prints a version
 - Ensure you rebooted after adding user to groups
 
-### bitsandbytes errors
-Use the ROCm fork only.
-
-### Training stalls
-Check for:
-- hipBLASLt warnings
-- mismatched ROCm/PyTorch versions
-- missing RDNA3 fix
+### If training stalls, check:
+  - hipBLASLt warnings
+  - mismatched PyTorch wheels
+  - missing ROCm libraries
 
 ---
 

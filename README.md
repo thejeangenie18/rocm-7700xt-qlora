@@ -1,16 +1,17 @@
-# Qwen2.5‑3B QLoRA Training (AMD ROCm + 4‑bit NF4)
+# Qwen2.5‑3B QLoRA Training (AMD ROCm + 4‑bit Quanto)
 
-A fully RDNA3-safe QLoRA training pipeline for fine-tuning Qwen/Qwen2.5‑3B‑Instruct with 4-bit NF4 quantization and LoRA adapters.
+A fully RDNA3‑safe QLoRA training pipeline for fine‑tuning Qwen/Qwen2.5‑3B‑Instruct using Quanto 4‑bit quantization and LoRA adapters.
 
-Designed for local-first, reproducible training on 12GB VRAM AMD RDNA3 GPUs such as the Radeon RX 7700 XT.
+Designed for local‑first, reproducible training on 12GB VRAM AMD RDNA3 GPUs such as the Radeon RX 7700 XT.
 
 ## Features
-- RDNA3-safe training with BitsAndBytes NF4 and fp16 compute
-- ROCm-safe optimizer: `paged_adamw_32bit`
+- RDNA3‑safe 4‑bit training using Quanto (not BitsAndBytes)  
+BitsAndBytes NF4 is not compatible with RDNA3 because its CUDA/Triton kernels cannot execute on AMD hardware.
+- ROCm‑safe optimizer: paged_adamw_32bit
 - LoRA rank 64 tuned for Qwen2.5
 - 12GB VRAM friendly
 - Clean JSONL dataset format
-- CPU-safe LoRA merge into a single fp16 `safetensors` model
+- CPU‑safe LoRA merge into a single fp16 safetensors model
 - RDNA3 stability settings included in all scripts
 
 ## Requirements
