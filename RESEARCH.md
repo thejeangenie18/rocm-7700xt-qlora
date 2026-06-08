@@ -1,17 +1,19 @@
 # Triton‑Generated Kernels Produce Incorrect Results or Stalls on RDNA3 Due to ISA‑Level Hazards
 
 ## Summary
+# Triton‑Generated Kernels Produce Incorrect Results or Stalls on RDNA3 Due to ISA‑Level Hazards
+
+## Summary
 This issue documents the RDNA3‑specific ISA rules that Triton‑generated kernels currently violate. These violations lead to:
 - silent numerical corruption
 - incorrect attention outputs
-- hangs or stalls
+- hangs or deadlocks
 - non-deterministic gradients
-- performance collapse 
+- severe performance collapse 
 
-All citations and § references refer to amd’s official “rdna3 shader instruction set architecture reference guide” (august 2023):  
-[amd rdna3 isa reference guide](https://docs.amd.com/v/u/en-US/rdna3-shader-instruction-set-architecture-feb-2023_0)
+All citations and § references refer to [AMD’s official RDNA3 Shader Instruction Set Architecture Reference Guide (August 2023)](https://docs.amd.com/v/u/en-US/rdna3-shader-instruction-set-architecture-feb-2023_0)
 
-My goal is to provide clear, actionable information for improving Triton’s AMD backend or clarifying current limitations.
+The goal is to provide **clear, actionable documentation** for users and developers regarding Triton’s current limitations on RDNA3 GPUs.
 
 ---
 
@@ -38,69 +40,70 @@ My goal is to provide clear, actionable information for improving Triton’s AMD
 
 ---
 
-### 1. WMMA → WMMA Dependency Hazard (ISA §5.4)
-RDNA3 requires one instruction bubble between dependent WMMA operations.
+## 1. WMMA → WMMA Dependency Hazard (ISA §5.4)
+RDNA3 requires a bubble between dependent WMMA instructions:
 ```
 “Dependent WMMA instructions must be separated by at least one VALU or V_NOP.”
 ```
 Triton does not insert this bubble, causing silent corruption in matmul and attention kernels.
 
-### 2. WMMA Ignores EXEC Masking (ISA §5.4.3)
+## 2. WMMA Ignores EXEC Masking (ISA §5.4.3)
 RDNA3 forces EXEC = all‑ones for WMMA.
 ```
 “WMMA instructions execute with EXEC forced to all active lanes.”
 ```
-Triton uses predication for partial tiles → incorrect results.
+Triton uses predication for partial tiles → **incorrect results**.
 
-### 3. Wave64 Hazards (ISA §3.2)
-## a. VOPD is wave32‑only
+## 3. Wave64 Hazards (ISA §3.2)
+### a. VOPD is wave32‑only
 ```
 “VOPD instructions silently no‑op in wave64 mode.”
 ```
-Triton emits VOPD in wave64 → lost instructions.
+Triton emits VOPD in wave64 → **lost instructions**.
 
-## b. SGPR read/write aliasing
+### b. SGPR read/write aliasing
 ```
 “Wave64 VALU instructions that read and write the same SGPR produce undefined results.”
 ```
-Triton emits such patterns → unpredictable gradients.
+Triton emits such patterns → **non‑deterministic gradients**.
 
 ### 4. FLAT_ Requires Full s_waitcnt(0) (ISA §8.2)*
 FLAT increments both VMcnt and LGKMcnt.
 ```
 “FLAT instructions require a full waitcnt(0) before dependent operations.”
 ```
-Triton uses partial waits → race conditions and stalls.
+Triton uses partial waits → **race conditions and stalls**.
 
 ### 5. SMEM Partial Waits Are Invalid (ISA §8.2 Note)
 ```
 “Because SMEM instructions can return out‑of‑order, the only sensible S_WAITCNT value after SMEM is lgkmcnt(0).”
 ```
+Triton does not enforce this → **stale descriptor loads**.
 
 ### 6. LDS Bank Conflicts (ISA §7.1)
 LDS has 64 banks, 128‑byte periodicity.
 ```
 “N‑way conflicts serialize to N cycles (wave32) or 2N cycles (wave64).”
 ```
-Triton’s row‑major tiles cause 32‑way conflicts → catastrophic slowdown.
+Triton’s row‑major tiles cause **32‑way conflicts** → catastrophic slowdown.
 
 ### 7. S_BARRIER Is Not a Memory Fence (ISA §8.3)
 ```
 “Barrier instructions do not wait for any counters to reach zero.”
 ```
-Triton treats S_BARRIER like CUDA’s __syncthreads() → data races.
+Triton treats `S_BARRIER` like CUDA’s `__syncthreads()` → **data races**.
 
 ### 8. V_PERMLANE Only Operates on 32 Lanes (ISA §5.3)
 ```
 “Cross‑half permutes require LDS.”
 ```
-Triton emits cross‑half permutes in wave64 → incorrect attention masking.
+Triton emits cross‑half permutes in wave64 → **incorrect attention masking**.
 
 ### 9. Store Visibility Requires VScnt Drain (ISA §8.2)
 ```
 “S_WAITCNT does not drain VScnt.”
 ```
-Triton does not emit S_WAITCNT_VSCNT null, 0 → stores not visible across kernels.
+Triton does not emit `S_WAITCNT_VSCNT null, 0` → **stores not visible across kernels**.
 
 ### 10. Real‑World Symptoms Observed
 - FlashAttention v2/v3 produces incorrect outputs
@@ -109,18 +112,19 @@ Triton does not emit S_WAITCNT_VSCNT null, 0 → stores not visible across kerne
 - Wave64 kernels run at half speed due to VOPD no‑ops
 - SMEM descriptor loads return stale values
 - LDS tile loads collapse to 1/32 throughput
-All of these disappear when using ROCm’s native kernels (rocBLAS, hipBLAS, MIOpen).
+**All of these disappear when using ROCm’s native kernels** (rocBLAS, hipBLAS, MIOpen).
 
 ### 11. Known‑Working RDNA3‑Safe Path
-I validated a fully RDNA3‑safe QLoRA pipeline using:
-- Quanto 4‑bit quantization
-- BF16 compute + F32 accumulators
-- No Triton kernels
-- No FlashAttention
-- ROCm‑native matmuls only
-This path produces stable, correct results on RDNA3.
+A fully RDNA3‑safe QLoRA pipeline requires:
+- **BF16 compute + FP32 accumulators**
+- **No Triton kernels**
+- **No FlashAttention**
+- **ROCm-native matmuls only** (rocBLAS / hipBLAS)
+- **Standard PEFT QLoRA adapters** (no fused kernels)
+- **Transformers + Accelerate only**
+This configuration produces stable, correct results on RDNA3 with ROCm 7.2.1.
 
 ### 12. Request
-If Triton’s AMD backend is expected to support RDNA3, the above ISA rules must be implemented in codegen.
+If Triton’s AMD backend is intended to support RDNA3, the above ISA rules must be implemented in codegen.
 
-If Triton is not intended to support RDNA3 at this time, documenting these limitations would help users avoid silent correctness issues.
+If Triton is not intended to support RDNA3 at this time, documenting these limitations would help users avoid silent correctness issues and choose safe alternatives.
