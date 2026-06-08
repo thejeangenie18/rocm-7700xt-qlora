@@ -5,7 +5,6 @@
 # Their documentation was instrumental in stabilizing QLoRA training on RDNA3 GPUs.
 
 import os
-import json
 import torch
 from datasets import load_dataset
 from transformers import (
@@ -13,7 +12,7 @@ from transformers import (
     AutoModelForCausalLM,
     TrainingArguments,
     DataCollatorForLanguageModeling,
-    BitsAndBytesConfig,
+    Trainer,
 )
 from peft import LoraConfig, get_peft_model
 
@@ -25,29 +24,18 @@ os.environ["HSA_OVERRIDE_GFX_VERSION"] = "11.0.0"
 os.environ["HSA_ENABLE_SDMA"] = "1"
 os.environ["ROCM_FORCE_ENABLE_DP"] = "1"
 
-# Optional: allow TF32 matmul on ROCm 6.1+ (improves throughput)
-torch.backends.cuda.matmul.allow_tf32 = True
+# -----------------------------
+# ABSOLUTE PATHS FOR CLEAN PROJECT STRUCTURE
+# -----------------------------
+BASE_DIR = "/home/jg18/Project/Qlora"
 
-# -----------------------------
-# CONFIG
-# -----------------------------
-MODEL_NAME = "Qwen/Qwen2.5-3B-Instruct"
-DATA_PATH = "data/fourth-train.jsonl"
-OUTPUT_DIR = "./qwen3b_qlora_output"
+MODEL_NAME = f"{BASE_DIR}/models/spoonie-helper-v3"
+DATA_PATH = f"{BASE_DIR}/data/new_samples.jsonl"
+OUTPUT_DIR = f"{BASE_DIR}/loras/spoonie-helper-v4-lora"
 MAX_SEQ_LEN = 2048
 
 # -----------------------------
-# 4-BIT QUANTIZATION CONFIG
-# -----------------------------
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_compute_dtype=torch.float16,
-    bnb_4bit_use_double_quant=True,
-    bnb_4bit_quant_type="nf4",
-)
-
-# -----------------------------
-# LOAD TOKENIZER + MODEL (RDNA3-SAFE)
+# LOAD TOKENIZER + MODEL (NO BITSANDBYTES, NO TRITON)
 # -----------------------------
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token
@@ -55,15 +43,14 @@ tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
     trust_remote_code=True,
-    quantization_config=bnb_config,
-    torch_dtype=torch.float16,
-    device_map={"": 0},  # force everything on GPU 0
+    torch_dtype=torch.bfloat16,  # RDNA3-native, stable
+    device_map={"": 0},
 )
 
 model.config.pad_token_id = tokenizer.eos_token_id
 
 # -----------------------------
-# LOAD DATASET (JSONL)
+# LOAD DATASET
 # -----------------------------
 hf_dataset = load_dataset(
     "json",
@@ -74,7 +61,7 @@ hf_dataset = load_dataset(
 print("Loaded", len(hf_dataset), "training examples.")
 
 # -----------------------------
-# FORMAT EXAMPLES (JSONL-STYLE PROMPT)
+# FORMAT EXAMPLES
 # -----------------------------
 def format_example(example):
     instruction = example.get("instruction", "")
@@ -93,8 +80,7 @@ def format_example(example):
             f"### Output\n"
         )
 
-    full_text = prompt + output_text
-    return {"text": full_text}
+    return {"text": prompt + output_text}
 
 hf_dataset = hf_dataset.map(format_example)
 
@@ -137,32 +123,29 @@ lora_config = LoraConfig(
 model = get_peft_model(model, lora_config)
 
 # -----------------------------
-# TRAINING ARGS
+# TRAINING ARGS (RDNA3-SAFE)
 # -----------------------------
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
-    num_train_epochs=1,
-    per_device_train_batch_size=1,
-    gradient_accumulation_steps=8,
-    learning_rate=2e-4,
-    bf16=False,
-    fp16=True,
-    logging_steps=5,
-    save_steps=200,
-    max_steps=200,
+    num_train_epochs=2,
+    per_device_train_batch_size=1,   # RDNA3 register pressure fix
+    gradient_accumulation_steps=16,  # keeps effective batch size reasonable
+    learning_rate=1.5e-4,
+    bf16=True,                       # RDNA3-native
+    fp16=False,                      # disable FP16
+    logging_steps=10,
+    save_steps=250,
+    max_steps=-1,
     save_total_limit=3,
     optim="paged_adamw_32bit",
     gradient_checkpointing=True,
     report_to="none",
     remove_unused_columns=False,
-    seed=42,
 )
 
 # -----------------------------
 # TRAIN
 # -----------------------------
-from transformers import Trainer
-
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -178,4 +161,5 @@ trainer.train()
 trainer.save_model(OUTPUT_DIR)
 tokenizer.save_pretrained(OUTPUT_DIR)
 
-print("Training complete. Model saved to:", OUTPUT_DIR)
+print("Training complete. LoRA saved to:", OUTPUT_DIR)
+
