@@ -22,7 +22,6 @@ BitsAndBytes NF4 is not compatible with RDNA3 because its CUDA/Triton kernels ca
 - 16GB RAM recommended
 
 ## System Requirements
-
 This pipeline is tested on AMD RDNA3 hardware with ROCm 6.x. ROCm is sensitive to kernel and OS versions, so use a compatible setup.
 
 ### Supported Operating Systems
@@ -45,7 +44,6 @@ This pipeline is tested on AMD RDNA3 hardware with ROCm 6.x. ROCm is sensitive t
 - Tested on: AMD Radeon RX 7700 XT (`gfx1101`)
 
 ## Verified Build Information
-
 | Component      | Value                                |
 |----------------|--------------------------------------|
 | GPU            | AMD Radeon RX 7700 XT (`gfx1101`)    |
@@ -60,20 +58,20 @@ This pipeline is tested on AMD RDNA3 hardware with ROCm 6.x. ROCm is sensitive t
 | Virtual Env    | `venv` (Python 3.10)                 |
 
 ## Installation
+See the full setup guide in [INSTALL.md](INSTALL.md).
 
-Follow the installation guide in `INSTALL.md` for the full ROCm + PyTorch + QLoRA environment on Ubuntu 24.04.
-
-This includes:
-- Python 3.10 setup for PyTorch ROCm wheels
+This covers:
+- Python 3.10 environment setup
 - ROCm 6.1 installation for Ubuntu 24.04
-- PyTorch ROCm wheel installation
-- RDNA3 stability fixes from BEATEK_ROCm
+- PyTorch ROCm wheels
+- RDNA3 stability fixes
 - QLoRA dependencies
 - Hugging Face CLI usage
 - GPU inference verification
 
-## Dataset Format
+For RDNA3 ISA notes, Triton hazards, and kernel‑level analysis, see [RESEARCH.md](RESEARCH.md).
 
+## Dataset Format
 Store training data in `data/train.jsonl`, one JSON object per line:
 
 ```jsonl
@@ -93,7 +91,6 @@ Each example is converted to the following prompt template:
 ```
 
 ## Training
-
 Run the RDNA3-safe training script:
 
 ```bash
@@ -110,7 +107,6 @@ The LoRA adapter is saved to:
 `qwen3b_qlora_output/`
 
 ## Merge LoRA into a Single fp16 Model
-
 After training, merge the adapter into a standalone fp16 model:
 
 ```bash
@@ -118,7 +114,6 @@ python merge_qwen_lora_final.py
 ```
 
 Output:
-
 ```
 qwen3b_merged_fp16_final/
   ├─ model.safetensors
@@ -129,7 +124,6 @@ qwen3b_merged_fp16_final/
 This merged model does not require PEFT and is ready for inference.
 
 ## Inference (Merged Model)
-
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
@@ -153,12 +147,10 @@ print(tok.decode(outputs[0], skip_special_tokens=True))
 ```
 
 ## RDNA3 Stability Credits
-
 This project includes RDNA3-specific ROCm fixes originally documented by Beat-k in the BEATEK_ROCm project:
 https://github.com/Beat-k/BEATEK_ROCm
 
 ## License
-
 MIT for repository code.
 Model weights follow their respective license terms.
 

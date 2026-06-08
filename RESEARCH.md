@@ -8,7 +8,7 @@ This issue documents the RDNA3‑specific ISA rules that Triton‑generated kern
 - non-deterministic gradients
 - performance collapse 
 
-all citations and § references refer to amd’s official “rdna3 shader instruction set architecture reference guide” (august 2023):  
+All citations and § references refer to amd’s official “rdna3 shader instruction set architecture reference guide” (august 2023):  
 [amd rdna3 isa reference guide](https://docs.amd.com/v/u/en-US/rdna3-shader-instruction-set-architecture-feb-2023_0)
 
 My goal is to provide clear, actionable information for improving Triton’s AMD backend or clarifying current limitations.

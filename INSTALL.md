@@ -15,10 +15,8 @@ This guide walks you through setting up a full AMD ROCm environment with PyTorch
 ---
 
 ## 1.1 Install Python 3.10 (required for ROCm PyTorch)
-
 Ubuntu 24.04 ships with Python 3.12, which is not supported by PyTorch ROCm wheels.
-Install Python 3.10 from deadsnakes:
-
+Install Python 3.10 from deadsnakes:  
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update
@@ -26,13 +24,11 @@ sudo apt install python3.10 python3.10-venv python3.10-dev
 ```
 
 Verify:
-
 ```bash
 python3.10 --version
 ```
 
 Create your virtual environment using Python 3.10:
-
 ```bash
 python3.10 -m venv ~/rocm-env
 ```
@@ -149,7 +145,6 @@ pip install git+https://github.com/unslothai/unsloth.git
 ---
 
 ## 7. RDNA3 / ROCm Stability Fixes (Credits: BEATEK_ROCm)
-
 These environment variables significantly improve stability for RDNA3 GPUs during QLoRA training and inference.  
 Originally documented by Beat‑k in the BEATEK_ROCm project:
 
@@ -166,7 +161,6 @@ export ROCM_FORCE_ENABLE_DP=1
 ```
 
 Reload your shell:
-
 ```bash
 source ~/.bashrc
 ```
@@ -174,14 +168,12 @@ source ~/.bashrc
 ---
 
 ## 8. Download Model Weights (Recommended to log in to HF beforehand)
-
 ```bash
 pip install huggingface_hub
 huggingface-cli login
 ```
 
 Example:
-
 ```bash
 huggingface-cli download Qwen/Qwen2.5-3B-Instruct \
   --local-dir ./models/qwen25-3b
