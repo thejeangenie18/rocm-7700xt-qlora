@@ -1,15 +1,14 @@
-# Installation Guide (ROCm + PyTorch + QLoRA) — Ubuntu 24.04 (Noble)
-
+# INSTALL.md — ROCm 7.2.1 + PyTorch + QLoRA (RDNA3 / Ubuntu 24.04)
 This guide walks you through setting up a full AMD ROCm environment with PyTorch (ROCm build), a Python 3.10 virtual environment, and all dependencies required for QLoRA training on RDNA3 GPUs such as the RX 7700 XT / 7800 XT.
 
 ---
 
 ## 1. System Requirements
 - Ubuntu 24.04 LTS (Noble)
-- AMD RDNA3 GPU (e.g., RX 7700 XT, 7800 XT)
-- Kernel 6.x (default on 24.04)
+- AMD RDNA3 GPU (RX 7700 XT, 7800 XT, 7900 GRE, etc.)
+- ROCm 7.2.1
 - Python 3.10 (required for PyTorch ROCm wheels)
-- At least 16GB system RAM
+- 16GB+ RAM
 - 12GB+ VRAM recommended for 3B–7B models
 
 ---
@@ -35,19 +34,22 @@ python3.10 -m venv ~/rocm-env
 
 ---
 
-## 2. Install ROCm (Ubuntu 24.04)
+## 2. Install ROCm 7.2.1 (Ubuntu 24.04)
 
 ### Add AMD ROCm repository for Noble
 ```bash
 sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/rocm.gpg
-echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/rocm/apt/6.1 noble main' | sudo tee /etc/apt/sources.list.d/rocm.list
+curl -fsSL https://repo.radeon.com/rocm/rocm.gpg.key \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/rocm.gpg
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] \
+https://repo.radeon.com/rocm/apt/7.2 noble main' \
+  | sudo tee /etc/apt/sources.list.d/rocm.list
 ```
 
-### Install ROCm packages
+### Install ROCm 7.2.1 packages
 ```bash
 sudo apt update
-sudo apt install rocm-hip-sdk rocm-hip-libraries rocm-device-libs
+sudo apt install rocm-hip-sdk rocm-hip-runtime rocm-device-libs rocm-opencl-runtime rocminfo
 ```
 
 ### Add ROCm to environment
@@ -79,12 +81,22 @@ sudo reboot
 ## 3. Verify ROCm Installation
 
 ### Check GPU visibility
+```bash
 rocminfo | grep -i gfx
+```
 
-Expected: gfx1101 (RDNA3)
+Expected: ```gfx1101``` (RDNA3)
+
+## Check ROCm version
+```bash
+dpkg -l | grep rocm
+```
+Expected: ```7.2.1.70201-81~24.04```
 
 ### Verify HIP runtime
+```bash
 hipinfo
+```
 
 ---
 
@@ -97,12 +109,12 @@ pip install --upgrade pip
 
 ---
 
-## 5. Install PyTorch (ROCm Build)
+## 5. Install PyTorch (ROCm 7.2 Build)
 
-### Install from ROCm wheel index
+### Install from the ROCm 7.2 wheel index:
 ```bash
-pip install torch torchvision torchaudio \
-  --index-url https://repo.radeon.com/rocm/manylinux/rocm-rel-6.1/
+pip install torch torchvision \
+  --index-url https://repo.radeon.com/rocm/manylinux/rocm-rel-7.2/
 ```
 
 ### Verify PyTorch sees your GPU
@@ -116,7 +128,7 @@ EOF
 ```
 
 Expected output:
-- HIP version: 6.1
+- HIP version: 7.2
 - GPU available: True
 - Device: AMD Radeon RX 7700 XT (or similar)
 
@@ -124,11 +136,36 @@ Expected output:
 
 ## 6. Install QLoRA + Training Dependencies
 ```bash
-pip install transformers accelerate datasets sentencepiece
-pip install peft
+pip install \
+  accelerate==1.13.0 \
+  datasets==4.8.5 \
+  einops==0.8.2 \
+  huggingface_hub==1.17.0 \
+  loguru==0.7.3 \
+  numpy==2.2.6 \
+  orjson==3.11.9 \
+  packaging==26.2 \
+  peft==0.19.1 \
+  pillow==12.2.0 \
+  python-dotenv==1.0.1 \
+  regex==2026.5.9 \
+  requests==2.32.3 \
+  rich==13.7.1 \
+  safetensors==0.7.0 \
+  sentencepiece==0.2.1 \
+  tqdm==4.67.3 \
+  transformers==5.9.0 \
+  typing_extensions==4.15.0 \
+  urllib3==2.7.0
 ```
 
-### Install Quanto (ROCm‑safe 4‑bit quantization)
+### Important:
+- No Triton
+- No bitsandbytes
+- No ONNX Runtime
+- No CUDA‑only packages
+
+# Optional: Install Quanto (ROCm‑safe 4‑bit quantization)
 ```bash
 pip install "quanto>=0.2.0"
 ```
@@ -173,7 +210,7 @@ pip install huggingface_hub
 huggingface-cli login
 ```
 
-Example:
+Example: 
 ```bash
 huggingface-cli download Qwen/Qwen2.5-3B-Instruct \
   --local-dir ./models/qwen25-3b
@@ -197,9 +234,12 @@ If this runs without errors, your environment is ready.
 
 ---
 
-## 10. RDNA3 Notes
-- ROCm 6.1 includes major RDNA3 improvements.
-- This pipeline uses Quanto 4‑bit quantization, which is fully compatible with ROCm and RDNA3. BitsAndBytes is not used because its CUDA/Triton kernels are incompatible with AMD GPUs.
+## 10. RDNA3 Notes (ROCm 7.2.1)
+- ROCm 7.2.1 provides the most stable RDNA3 support to date.
+- BitsAndBytes is not used — incompatible with AMD GPUs.
+- Triton must not be installed — PyTorch will miscompile kernels on RDNA3.
+- This environment uses HF Transformers + PEFT + Accelerate only.
+- Quanto is optional but not required for your current workflow.
 - The RDNA3 inference fix significantly improves stability.
 
 ---
@@ -208,15 +248,15 @@ If this runs without errors, your environment is ready.
 
 ### PyTorch cannot find GPU
 - Ensure `rocminfo` shows `gfx1101`
-- Ensure `torch.version.hip` prints a version
+- Ensure `torch.version.hip` prints `7.2`
 - Ensure you rebooted after adding user to groups
 
 ### If training stalls, check:
-  - hipBLASLt warnings
-  - mismatched PyTorch wheels
-  - missing ROCm libraries
+  - Check for hipBLASLt warnings
+  - Ensure PyTorch was installed from the ROCm 7.2 wheel index
+  - Ensure Triton is not installed
 
 ---
 
-### Your ROCm + PyTorch environment is now fully configured for QLoRA training.
+### Your ROCm 7.2.1 + PyTorch environment is now fully configured for QLoRA training on RDNA3.
 
