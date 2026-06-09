@@ -1,9 +1,6 @@
 # Triton‑Generated Kernels Produce Incorrect Results or Stalls on RDNA3 Due to ISA‑Level Hazards
 
 ## Summary
-# Triton‑Generated Kernels Produce Incorrect Results or Stalls on RDNA3 Due to ISA‑Level Hazards
-
-## Summary
 This issue documents the RDNA3‑specific ISA rules that Triton‑generated kernels currently violate. These violations lead to:
 - silent numerical corruption
 - incorrect attention outputs
