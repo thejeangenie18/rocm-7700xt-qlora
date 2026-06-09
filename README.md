@@ -1,4 +1,4 @@
-# # Qwen2.5‑3B QLoRA Training (AMD ROCm + 4‑bit Quanto)
+# Qwen2.5‑3B QLoRA Training (AMD ROCm + 4‑bit Quanto)
 A fully RDNA3‑safe QLoRA training pipeline for fine‑tuning Qwen/Qwen2.5‑3B‑Instruct using LoRA adapters on AMD GPUs.
 This project is designed for local‑first, reproducible training on 12GB VRAM RDNA3 GPUs such as the Radeon RX 7700 XT.
 This pipeline uses no Triton, no BitsAndBytes, and no CUDA‑only kernels. Everything is validated on ROCm 7.2.1.
@@ -68,7 +68,7 @@ This covers:
 - Hugging Face CLI usage
 - GPU inference verification
 
-For RDNA3 ISA notes, Triton hazards, and kernel‑level analysis, see [RESEARCH.md](RESEARCH.md).
+For RDNA3 ISA notes, Triton hazards, and kernel‑level analysis, see [RESEARCH.md](research/RESEARCH.md).
 
 ## Dataset Format
 Store training data in `data/train.jsonl`, one JSON object per line:
