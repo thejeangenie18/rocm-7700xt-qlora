@@ -13,6 +13,16 @@ This pipeline uses no Triton, no BitsAndBytes, and no CUDA‑only kernels. Every
 - RDNA3 stability settings included in all scripts
 - Minimal, stable ROCm 7.2.1 Python environment
 
+## Ongoing Findings (ROCm 7.2.4+)
+ROCm 7.2.4 introduces several kernel‑correctness improvements for RDNA3.
+The research in this repository currently documents pre‑fix behavior
+(ROCm 7.2.0–7.2.3), and new findings for 7.2.4+ will be added as the
+project develops.
+
+As additional QLoRA training runs, inference traces, and reproducibility
+reports are collected, the post‑fix section of the research will expand.
+Contributions and independent logs from other RDNA3 users are welcome.
+
 ## Requirements
 - AMD GPU with RDNA3 architecture (`gfx1100`, `gfx1101`, `gfx1102`)
 - ROCm 7.2.1
@@ -68,7 +78,7 @@ This covers:
 - Hugging Face CLI usage
 - GPU inference verification
 
-For RDNA3 ISA notes, Triton hazards, and kernel‑level analysis, see [RESEARCH.md](research/RESEARCH.md).
+For RDNA3 ISA notes, Triton hazards, and kernel‑level analysis, see [RESEARCH.md](research/README.md).
 
 ## Dataset Format
 Store training data in `data/train.jsonl`, one JSON object per line:
