@@ -5,7 +5,7 @@ All screenshots are stored in the repository under: [evidence](../evidence/)
 Each item below links to a specific training or inference log demonstrating real‑world behavior on RDNA3 hardware (Radeon RX 7700 XT, ROCm 7.2.1).  
 All images include descriptive alt‑text for screen‑reader accessibility.
 
-[Back to main README](../README.md) [Back to Research README](./README.md)
+[Back to main README](../README.md) | [Back to Research README](./README.md)
 
 ### A1 — GPT‑Neo QLoRA Demo (May 28, 2026)
 Supports:  
@@ -15,7 +15,7 @@ Supports:
 - Correct gradient behavior (§1, §6.1)
 
 **Screenshot:**   
-![A terminal window shows a PyTorch Accelerate training run for the GPT‑Neo‑125M model on ROCm, including command setup, weight loading, unexpected key warnings, training metrics, and a final completion message.](.../evidence/2026-06-01+gptneo_demo.png)  
+![A terminal window shows a PyTorch Accelerate training run for the GPT‑Neo‑125M model on ROCm, including command setup, weight loading, unexpected key warnings, training metrics, and a final completion message.](../evidence/2026-06-01_gptneo_demo.png)  
 **Alt Text:**  
 A terminal window shows a PyTorch Accelerate training run for the GPT‑Neo‑125M model on ROCm, including command setup, weight loading, unexpected key warnings, training metrics, and a final completion message.  
 **Image Description:**  
@@ -32,7 +32,7 @@ Supports:
 - No Triton kernels in successful runs (§4)
 
 **Screenshot**  
-![A terminal window shows a QLoRA training script running, with logs for dataset mapping, weight loading, training iterations, warnings, and real‑time loss and learning‑rate metrics.](.../evidence/2026-05-29_qwen25_training.png)  
+![A terminal window shows a QLoRA training script running, with logs for dataset mapping, weight loading, training iterations, warnings, and real‑time loss and learning‑rate metrics.](../evidence/2026-05-29_qwen25_training.png)  
 **Alt Text:**  
 A terminal window shows a QLoRA training script running, with logs for dataset mapping, weight loading, training iterations, warnings, and real‑time loss and learning‑rate metrics.
 
@@ -50,7 +50,7 @@ Supports:
 - ROCm-native matmuls only (§4)
 
 **Screenshot:**
-![A terminal window shows the completion of a machine‑learning training run, displaying final runtime, sample and step rates, loss value, and a full progress bar at 100%.](.../evidence/2026-05-30_tinyllama_final.png)  
+![A terminal window shows the completion of a machine‑learning training run, displaying final runtime, sample and step rates, loss value, and a full progress bar at 100%.](../evidence/2026-05-30_tinyllama_final.png)  
 **Alt Text:** 
 A terminal window shows the completion of a machine‑learning training run, displaying final runtime, sample and step rates, loss value, and a full progress bar at 100%.  
 **Image Description**:  
@@ -66,7 +66,7 @@ Supports:
 - ROCm-native matmuls only (§4)
 
 **Screenshot:**  
-![A terminal window shows a Python script attempting to load a Qwen model and LoRA adapter, displaying validation and file‑path errors before successfully generating text explaining spoon theory.](.../evidence/2026-06-06_inference_spoon_theory.png)  
+![A terminal window shows a Python script attempting to load a Qwen model and LoRA adapter, displaying validation and file‑path errors before successfully generating text explaining spoon theory.](../evidence/2026-06-06_inference_spoon_theory.png)  
 **Alt Text:**  
 A terminal window shows a Python script attempting to load a Qwen model and LoRA adapter, displaying validation and file‑path errors before successfully generating text explaining spoon theory.  
 **Image Description:**  
@@ -85,7 +85,7 @@ Supports:
 - RDNA3‑safe QLoRA path validated (§4)
 
 **Screenshot:**  
-![A terminal window shows a QLoRA training script running on a small dataset, with progress bars, iterative loss and learning‑rate metrics, and a final message confirming the model was saved.](.../evidence/2026-06-08_qwen3b_post_rdna3_fix_training.png)  
+![A terminal window shows a QLoRA training script running on a small dataset, with progress bars, iterative loss and learning‑rate metrics, and a final message confirming the model was saved.](../evidence/2026-06-08_qwen3b_post_rdna3_fix_training.png)  
 **Alt Text:**   
 A terminal window shows a QLoRA training script running on a small dataset, with progress bars, iterative loss and learning‑rate metrics, and a final message confirming the model was saved.  
 **Image Description:**  
@@ -105,7 +105,7 @@ Supports:
 - hipBLASLt fallback functioning (§7)
 
 **Screenshot:**  
-![A terminal window displays real‑time logs from a QLoRA model training run, showing dataset loading, training progress, and metrics such as loss, gradient norm, learning rate, and epoch updates..](.../evidence/2026-6-10-10k-dataset.png)  
+![A terminal window displays real‑time logs from a QLoRA model training run, showing dataset loading, training progress, and metrics such as loss, gradient norm, learning rate, and epoch updates..](../evidence/2026-6-10-10k-dataset.png)  
 **Alt Text:**  
 A terminal window displays real‑time logs from a QLoRA model training run, showing dataset loading, training progress, and metrics such as loss, gradient norm, learning rate, and epoch updates.  
 **Image Description:**  
@@ -124,7 +124,7 @@ Supports:
 - Reproducible model‑artifact generation for downstream inference (§8)
 
 **Screenshot:**
-![A terminal window shows the output of a Python script merging a LoRA adapter into a Qwen model, including loading checkpoints, merging, copying the tokenizer, and confirming the merged model was saved.](.../evidence/2026-06-10-spoonie-v5.png)  
+![A terminal window shows the output of a Python script merging a LoRA adapter into a Qwen model, including loading checkpoints, merging, copying the tokenizer, and confirming the merged model was saved.](../evidence/2026-6-10-spoonie-v5.png)  
 **Alt Text:**  
 A terminal window shows the output of a Python script merging a LoRA adapter into a Qwen model, including loading checkpoints, merging, copying the tokenizer, and confirming the merged model was saved.  
 **Image Description:**  
@@ -142,7 +142,7 @@ Supports:
 - Verified TinyLlama suitability for low‑VRAM RDNA3 training (§4.2, §8)
 
 **Screenshot:**  
-![A terminal window shows a TinyLlama training script running, with logs for dataset loading, PyTorch warnings, iterative loss values, gradient norms, learning rates, and final training statistics.](.../evidence/2026-06-10-tinyllama-big.png)  
+![A terminal window shows a TinyLlama training script running, with logs for dataset loading, PyTorch warnings, iterative loss values, gradient norms, learning rates, and final training statistics.](../evidence/2026-6-10-tinyllama-big.png)  
 **Alt Text:**  
 A terminal window shows a TinyLlama training script running, with logs for dataset loading, PyTorch warnings, iterative loss values, gradient norms, learning rates, and final training statistics.  
 **Image Description:**  
@@ -162,7 +162,7 @@ Supports:
 - Reproducible merged‑model generation for downstream inference (§8)
 
 **Screenshot:**  
-![A terminal window shows a TinyLlama model merge script running, with logs for loading the base model, loading a LoRA adapter, merging, copying the tokenizer, and confirming the merged model was saved.](.../evidence/2026-06-10-tinyllama-v4.png)  
+![A terminal window shows a TinyLlama model merge script running, with logs for loading the base model, loading a LoRA adapter, merging, copying the tokenizer, and confirming the merged model was saved.](../evidence/2026-6-10-tinyllama-v4.png)  
 **Alt Text:**  
 A terminal window shows a TinyLlama model merge script running, with logs for loading the base model, loading a LoRA adapter, merging, copying the tokenizer, and confirming the merged model was saved.  
 **Image Description:**  
@@ -180,7 +180,7 @@ Supports:
 - Verified readiness for downstream self‑instruct task generation (§8)
 
 **Screenshot:**  
-![A terminal window shows a Python script loading a fine‑tuned Qwen model named “spoonie‑helper‑v5” on a GPU, displaying progress bars for checkpoint loading and confirming successful initialization.](.../evidence/2026-06-10-self-teach.png)  
+![A terminal window shows a Python script loading a fine‑tuned Qwen model named “spoonie‑helper‑v5” on a GPU, displaying progress bars for checkpoint loading and confirming successful initialization.](../evidence/2026-6-10-self-teach.png)  
 **Alt Text:**  
 A terminal window shows a Python script loading a fine‑tuned Qwen model named “spoonie‑helper‑v5” on a GPU, displaying progress bars for checkpoint loading and confirming successful initialization.  
 **Image Description:**  
@@ -199,7 +199,7 @@ Supports:
 - Review of conversational tone to ensure it aligns with accessibility goals (§3.2)
 
 **Screenshot:**  
-![A data‑wrangling interface displays a JSON dataset of ADA sections paired with plain‑language summaries, showing input prompts and generated outputs side by side.](.../evidence/2026-06-10-verify-st.png)
+![A data‑wrangling interface displays a JSON dataset of ADA sections paired with plain‑language summaries, showing input prompts and generated outputs side by side.](../evidence/2026-6-10-verify-st.png)
 **Alt Text**:  
 A data‑wrangling interface displays a JSON dataset of ADA sections paired with plain‑language summaries, showing input prompts and generated outputs side by side.  
 **Image Description:**  
@@ -208,7 +208,8 @@ The input panel contains rows of text prompts instructing an AI system to “Sum
 The output panel shows the model’s generated responses. The responses use an accessible, conversational tone, beginning with phrases like “Let’s break it down,” “Let’s keep it simple,” and “I’ll avoid medical claims.” Many entries end with supportive statements such as “Hope this helps” or “Let me know if you want a simpler version,” indicating the model is tuned for clarity, safety, and user‑friendly explanations.  
 Overall, the screen presents a side‑by‑side view of complex ADA legal text and the AI’s simplified, plain‑language interpretations, illustrating a workflow for building accessibility‑focused datasets.  
 
-### 11.2 - Why Checking Model Outputs Matters
+### A11.2 - Why Checking Model Outputs Matters
+
 - Prevents semantic drift — ensuring the model does not gradually shift away from accurate ADA interpretation (§1).
 - Prevents tone drift — confirming the model maintains a consistent, accessible, plain‑language voice rather than slipping into overly casual, overly formal, or unhelpful styles (§3.2).
 - Prevents safety drift — verifying the model continues to avoid medical claims, legal advice, or hallucinated obligations (§3.3).
@@ -217,7 +218,8 @@ Overall, the screen presents a side‑by‑side view of complex ADA legal text a
 - Protects downstream self‑instruct runs — because drift in early outputs compounds during recursive dataset generation (§4.2).
 - Ensures ADA legal text is interpreted faithfully — preventing the model from simplifying too aggressively or introducing inaccuracies (§1, §3.1).
 
-### 12 - First Full 3-Epoch QLoRA Cycle w/Qwen2-5-3B
+### A12 - First Full 3-Epoch QLoRA Cycle w/Qwen2-5-3B
+
 Earlier training runs ranged from 1–2 epochs (with one early 13.33‑epoch misconfigured run). The 2026‑06‑12 run represents the first fully stable 3‑epoch QLoRA cycle on Qwen2.5‑3B, demonstrating end‑to‑end pipeline stability, RDNA3 reliability, and reproducible training behavior.  
 
 Supports:
@@ -231,7 +233,7 @@ Supports:
 
 **Screenshots:**
 Pre-Run:
-![A terminal window shows a QLoRA training script initializing, with deprecation warnings, dataset loading, system‑snapshot saves, and early training metrics including loss, gradient norm, learning rate, and epoch.](.../evidence/2026‑06‑12‑qwen25.png)
+![A terminal window shows a QLoRA training script initializing, with deprecation warnings, dataset loading, system‑snapshot saves, and early training metrics including loss, gradient norm, learning rate, and epoch.](../evidence/2026-06-12-qwen25.png)
 **Alt Text:**  
 A terminal window shows a QLoRA training script initializing, with deprecation warnings, dataset loading, system‑snapshot saves, and early training metrics including loss, gradient norm, learning rate, and epoch.  
 **Image Description:**  
@@ -240,7 +242,7 @@ A progress bar shows model weights being loaded to 100%. The script then generat
 Following the setup phase, the terminal prints the first batch of training metrics. These include a loss value of 2.711, a gradient norm of 0.6948, a learning rate of 2.687e‑05, and an epoch value of 0.0136. The overall scene captures the early stage of a QLoRA fine‑tuning run, showing initialization, system monitoring, and the first signs of model optimization.  
 
 Post-Run:  
-![A terminal window shows the end of a QLoRA training run with loss and learning‑rate metrics, post‑training snapshots, LoRA adapter saving, and a merge script combining the adapter with the base Qwen model.](.../evidence/2026‑06‑12‑qwen25-post.png)  
+![A terminal window shows the end of a QLoRA training run with loss and learning‑rate metrics, post‑training snapshots, LoRA adapter saving, and a merge script combining the adapter with the base Qwen model.](../evidence/2026-06-12-qwen25-post.png)  
 **Alt Text:**  
 A terminal window shows the end of a QLoRA training run with loss and learning‑rate metrics, post‑training snapshots, LoRA adapter saving, and a merge script combining the adapter with the base Qwen model.  
 **Image Description:**  
@@ -250,7 +252,8 @@ A timestamped block labeled “Training Metrics” lists key configuration detai
 
 Overall, the image captures a complete end‑to‑end snapshot of a QLoRA training and merge pipeline: final optimization metrics, system snapshots, adapter export, and the creation of a fully merged model artifact.
 
-### 12.1 Epochs with Tinyllama   
+### A12.1 - Epochs with Tinyllama
+
 Supports:  
 - Correct initialization of TinyLlama incremental‑training workflow (§4.1)
 - Stable RDNA3 compute behavior across all epochs (§6.5)
@@ -261,7 +264,7 @@ Supports:
 - Proper handling of small‑batch, high‑throughput dataset mapping (§2.4)
 
 **Screenshots:**
-![A terminal window shows a TinyLlama QLoRA training script running, with dataset loading, deprecation warnings, iterative loss and learning‑rate metrics, and a final summary reporting runtime and saved adapter weights.](.../evidence/2026‑06‑12‑tinyllama.png)  
+![A terminal window shows a TinyLlama QLoRA training script running, with dataset loading, deprecation warnings, iterative loss and learning‑rate metrics, and a final summary reporting runtime and saved adapter weights.](../evidence/2026-06-12-tinyllama.png)  
 **Alt Text:**  
 A terminal window shows a TinyLlama QLoRA training script running, with dataset loading, deprecation warnings, iterative loss and learning‑rate metrics, and a final summary reporting runtime and saved adapter weights.  
 **Image Description:**  
