@@ -49,7 +49,7 @@ Supports:
 - No WMMA → FLAT deadlocks (§6.5)
 - ROCm-native matmuls only (§4)
 
-**Screenshot:**
+**Screenshot:**  
 ![A terminal window shows the completion of a machine‑learning training run, displaying final runtime, sample and step rates, loss value, and a full progress bar at 100%.](../evidence/2026-05-30_tinyllama_final.png)  
 **Alt Text:** 
 A terminal window shows the completion of a machine‑learning training run, displaying final runtime, sample and step rates, loss value, and a full progress bar at 100%.  
