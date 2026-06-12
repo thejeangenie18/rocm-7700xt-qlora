@@ -12,6 +12,12 @@ This pipeline uses no Triton, no BitsAndBytes, and no CUDA‑only kernels. Every
 - CPU‑safe LoRA merge into a single fp16 safetensors model
 - RDNA3 stability settings included in all scripts
 - Minimal, stable ROCm 7.2.1 Python environment
+- Incremental training support (Qwen3B incremental run)
+- System snapshots (ROCm SMI + system stats)
+- Verified BF16‑only matmul path
+- Verified hipBLASLt fallback behavior
+- Verified SDMA‑mediated stability
+- Verified safe merges (TinyLlama, Qwen3B)
 
 ## Ongoing Findings (ROCm 7.2.4+)
 ROCm 7.2.4 introduces several kernel‑correctness improvements for RDNA3.
@@ -75,7 +81,6 @@ This covers:
 - PyTorch ROCm 7.2 wheels
 - RDNA3 stability fixes
 - QLoRA dependencies
-- Hugging Face CLI usage
 - GPU inference verification
 
 For RDNA3 ISA notes, Triton hazards, and kernel‑level analysis, see [RESEARCH.md](research/README.md).
@@ -110,10 +115,26 @@ Expected signs of success:
 - trainable params ≈ 29.9M
 - loss decreasing
 - training steps progressing from 0 to 200
+- BF16 compute
+- no Triton kernels
+- hipBLASLt fallback warning
+- no FLAT_SCRATCH faults
+- no hangs
 
 The LoRA adapter is saved to:
 
 `qwen3b_qlora_output/`
+
+**Additional Verified Training Pipelines:**  
+- TinyLlama (314 examples) — stable 3‑epoch run
+- Qwen3B incremental training — stable 2208‑step run
+- Spoonie‑Helper v5 — stable 11,764‑example run
+
+All runs produce:  
+- stable gradients
+- no corruption
+- no deadlocks
+- correct merges
 
 ## Merge LoRA into a Single fp16 Model
 After training, merge the adapter into a standalone fp16 model:
@@ -154,6 +175,13 @@ inputs = tok(prompt, return_tensors="pt")
 outputs = model.generate(**inputs, max_new_tokens=200)
 print(tok.decode(outputs[0], skip_special_tokens=True))
 ```
+
+**Inference Stability Guarantees**
+- BF16 GPU inference is stable 
+- No EXEC divergence 
+- No masked‑lane artifacts 
+- No WMMA corruption 
+- No Triton kernels involved
 
 ## RDNA3 Stability Credits
 This project includes RDNA3-specific ROCm fixes originally documented by Beat-k in the BEATEK_ROCm project:

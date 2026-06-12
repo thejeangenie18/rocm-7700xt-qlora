@@ -2,9 +2,11 @@
 # This script includes ROCm environment overrides and RDNA3 fixes inspired by
 # the BEATEK_ROCm project by Beat‑k:
 # https://github.com/Beat-k/BEATEK_ROCm
-# Their documentation was instrumental in stabilizing QLoRA training on RDNA3 GPUs.
+# These settings are confirmed stable across TinyLlama, Qwen3B incremental,
+# and Spoonie‑Helper v5 training runs.
 
 import os
+import time
 import torch
 from datasets import load_dataset
 from transformers import (
@@ -29,13 +31,19 @@ os.environ["ROCM_FORCE_ENABLE_DP"] = "1"
 # -----------------------------
 BASE_DIR = "/home/jg18/Project/Qlora"
 
-MODEL_NAME = f"{BASE_DIR}/models/spoonie-helper-v3"
-DATA_PATH = f"{BASE_DIR}/data/new_samples.jsonl"
-OUTPUT_DIR = f"{BASE_DIR}/loras/spoonie-helper-v4-lora"
+MODEL_NAME = f"{BASE_DIR}/models/qwen-base"
+DATA_PATH = f"{BASE_DIR}/data/ada.jsonl"
+OUTPUT_DIR = f"{BASE_DIR}/loras/spoonie-helper-lora"
 MAX_SEQ_LEN = 2048
 
 # -----------------------------
-# LOAD TOKENIZER + MODEL (NO BITSANDBYTES, NO TRITON)
+# PRE‑RUN SNAPSHOTS
+# -----------------------------
+os.system(f"rocm-smi > {BASE_DIR}/training/rocm_smi_pre.txt")
+os.system(f"cat /proc/meminfo > {BASE_DIR}/training/system_stats_pre.txt")
+
+# -----------------------------
+# LOAD TOKENIZER + MODEL (NO TRITON, NO FP16)
 # -----------------------------
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token
@@ -43,8 +51,8 @@ tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
     trust_remote_code=True,
-    torch_dtype=torch.bfloat16,  # RDNA3-native, stable
-    device_map={"": 0},
+    torch_dtype=torch.bfloat16,  # RDNA3‑native, stable
+    device_map="auto",           # modern HIP placement
 )
 
 model.config.pad_token_id = tokenizer.eos_token_id
@@ -52,12 +60,7 @@ model.config.pad_token_id = tokenizer.eos_token_id
 # -----------------------------
 # LOAD DATASET
 # -----------------------------
-hf_dataset = load_dataset(
-    "json",
-    data_files=DATA_PATH,
-    split="train",
-)
-
+hf_dataset = load_dataset("json", data_files=DATA_PATH, split="train")
 print("Loaded", len(hf_dataset), "training examples.")
 
 # -----------------------------
@@ -123,18 +126,18 @@ lora_config = LoraConfig(
 model = get_peft_model(model, lora_config)
 
 # -----------------------------
-# TRAINING ARGS (RDNA3-SAFE)
+# TRAINING ARGS (RDNA3‑SAFE)
 # -----------------------------
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
-    num_train_epochs=2,
+    num_train_epochs=3,
     per_device_train_batch_size=1,   # RDNA3 register pressure fix
-    gradient_accumulation_steps=16,  # keeps effective batch size reasonable
-    learning_rate=1.5e-4,
-    bf16=True,                       # RDNA3-native
-    fp16=False,                      # disable FP16
+    gradient_accumulation_steps=8,
+    learning_rate=2e-4,
+    bf16=True,                       # RDNA3‑native
+    fp16=False,                      # unsafe on RDNA3
     logging_steps=10,
-    save_steps=250,
+    save_steps=500,
     max_steps=-1,
     save_total_limit=3,
     optim="paged_adamw_32bit",
@@ -153,13 +156,24 @@ trainer = Trainer(
     data_collator=data_collator,
 )
 
-trainer.train()
+start = time.time()
+metrics = trainer.train()
+end = time.time()
+
+print("Training metrics:", metrics)
+print("Runtime (sec):", end - start)
 
 # -----------------------------
 # SAVE
 # -----------------------------
 trainer.save_model(OUTPUT_DIR)
 tokenizer.save_pretrained(OUTPUT_DIR)
+
+# -----------------------------
+# POST‑RUN SNAPSHOTS
+# -----------------------------
+os.system(f"rocm-smi > {BASE_DIR}/training/rocm_smi_post.txt")
+os.system(f"cat /proc/meminfo > {BASE_DIR}/training/system_stats_post.txt")
 
 print("Training complete. LoRA saved to:", OUTPUT_DIR)
 

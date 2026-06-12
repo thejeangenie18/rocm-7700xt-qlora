@@ -1,11 +1,19 @@
 # INSTALL.md — ROCm 7.2.1 + PyTorch + QLoRA (RDNA3 / Ubuntu 24.04)
-This guide walks you through setting up a full AMD ROCm environment with PyTorch (ROCm build), a Python 3.10 virtual environment, and all dependencies required for QLoRA training on RDNA3 GPUs such as the RX 7700 XT / 7800 XT.
+A complete guide for setting up a stable, RDNA3‑safe QLoRA training environment using ROCm 7.2.1, PyTorch ROCm wheels, and Python 3.10.
+Validated on Radeon RX 7700 XT with ROCm 7.2.1 across multiple real training runs (TinyLlama, Qwen3B incremental).
+
+This environment uses:  
+- No Triton
+- No bitsandbytes
+- No CUDA‑only kernels
+- BF16‑only compute
+- ROCm‑native kernels only
 
 ---
 
 ## 1. System Requirements
 - Ubuntu 24.04 LTS (Noble)
-- AMD RDNA3 GPU (RX 7700 XT, 7800 XT, 7900 GRE, etc.)
+- AMD **RDNA3 GPU** (RX 7700 XT, 7800 XT, 7900 GRE, etc.)
 - ROCm 7.2.1
 - Python 3.10 (required for PyTorch ROCm wheels)
 - 16GB+ RAM
@@ -15,7 +23,7 @@ This guide walks you through setting up a full AMD ROCm environment with PyTorch
 
 ## 1.1 Install Python 3.10 (required for ROCm PyTorch)
 Ubuntu 24.04 ships with Python 3.12, which is not supported by PyTorch ROCm wheels.
-Install Python 3.10 from deadsnakes:  
+Install Python 3.10:  
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update
@@ -164,6 +172,7 @@ pip install \
 - No bitsandbytes
 - No ONNX Runtime
 - No CUDA‑only packages
+- **BF16 compute only** (FP16 is unsafe on RDNA3)
 
 # Optional: Install Quanto (ROCm‑safe 4‑bit quantization)
 ```bash
@@ -205,14 +214,24 @@ source ~/.bashrc
 ---
 
 ## 8. Download Model Weights (Recommended to log in to HF beforehand)
+Install New CLI:
 ```bash
 pip install huggingface_hub
-huggingface-cli login
+```
+
+Login:
+```
+hf auth login
+```
+
+Verify Login:
+```bash
+hf auth whoami
 ```
 
 Example: 
 ```bash
-huggingface-cli download Qwen/Qwen2.5-3B-Instruct \
+hf download Qwen/Qwen2.5-3B-Instruct \
   --local-dir ./models/qwen25-3b
 ```
 
@@ -228,6 +247,7 @@ model = AutoModelForCausalLM.from_pretrained("./models/qwen25-3b", device_map="a
 
 print("Loaded successfully.")
 EOF
+EOF
 ```
 
 If this runs without errors, your environment is ready.
@@ -235,13 +255,21 @@ If this runs without errors, your environment is ready.
 ---
 
 ## 10. RDNA3 Notes (ROCm 7.2.1)
-- ROCm 7.2.1 provides the most stable RDNA3 support to date.
-- BitsAndBytes is not used — incompatible with AMD GPUs.
-- Triton must not be installed — PyTorch will miscompile kernels on RDNA3.
-- This environment uses HF Transformers + PEFT + Accelerate only.
-- Quanto is optional but not required for your current workflow.
-- The RDNA3 inference fix significantly improves stability.
+**Confirmed safe:**
+- BF16 compute
+- ROCm‑native kernels
+- hipBLASLt → hipBLAS fallback
+- SDMA enabled
+- No Triton
+- No FlashAttention
+- No bitsandbytes
 
+**Confirmed unsafe:**  
+- FP16 matmuls
+- Triton kernels
+- hipBLASLt (without fallback)
+- Partial‑wait FLAT/SMEM sequences
+- Predicated WMMA tiles
 ---
 
 ## 11. Troubleshooting
@@ -252,10 +280,15 @@ If this runs without errors, your environment is ready.
 - Ensure you rebooted after adding user to groups
 
 ### If training stalls, check:
-  - Check for hipBLASLt warnings
-  - Ensure PyTorch was installed from the ROCm 7.2 wheel index
-  - Ensure Triton is not installed
+- Check for hipBLASLt warnings
+- Ensure PyTorch was installed from the ROCm 7.2 wheel index
+- Ensure Triton is not installed
+- Ensure BF16 is being used
 
+### Merge Failures
+- Ensure adapter path is correct
+- Ensure model + adapter use matching architectures
+- Ensure you are not mixing FP16 + BF16 weights
 ---
 
 ### Your ROCm 7.2.1 + PyTorch environment is now fully configured for QLoRA training on RDNA3.

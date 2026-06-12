@@ -1,0 +1,11 @@
+{
+  "model": "/home/jg18/Project/Qlora/models/tinyllama",
+  "dataset": "/home/jg18/Project/Qlora/data/tinyllama-ada.jsonl",
+  "dataset_size": 314,
+  "max_seq_length": 1024,
+  "train_loss": null,
+  "learning_rate": 0.0002,
+  "batch_size": 2,
+  "grad_accum": 8,
+  "epoch": 3.0
+}

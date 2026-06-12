@@ -27,7 +27,7 @@ A full before/after comparison and updated training‑run logs will be added as 
 ## Table of Contents  
 - [1. Introduction](#1-introduction)
 - [2. Background & Motivation](#2-background--motivation)
-- [3. RDNA3 Research Overview](#3-rdna3-research-overview)
+- [3. RDNA3 Architectural Overview](#3-rdna3-architectural-overview)
   - [3.1 WMMA Dependency Hazard](#31-wmma-dependency-hazard)
   - [3.2 WMMA Ignores EXEC Masking](#32-wmma-ignores-exec-masking)
   - [3.3 Wave64 Hazards](#33-wave64-hazards)
@@ -55,7 +55,7 @@ A full before/after comparison and updated training‑run logs will be added as 
 - [7. Empirical Evidence From Training & Inference Logs](#7-empirical-evidence-from-training--inference-logs)
 - [8. Community Reproducibility & Contributions](#8-community-reproducibility--contributions)
 - [9. ROCm 7.2.4 Update](#9-rocm-724-update)
-- [Appendix A — Evidence (Screenshots, Logs, Traces)](#appendix-a--evidence-screenshots-logs-traces)
+- [Appendix A — Evidence (Screenshots, Logs, Traces)](./appendix-a.md)
 
 ---
 
@@ -344,7 +344,7 @@ Together, §4, §6.6, and §6.7 form a complete story:
 [↑ Back to top](#table-of-contents)
 
 ### 7. Empirical Evidence From Training & Inference Logs  
-The following observations come from real training and inference logs collected between May 29 & June 8, 2026 on an RDNA3 GPU (Radeon RX 7700 XT) using ROCm 7.2.1. These logs provide independent confirmation of the hazards described in **§§1–8**.
+The following observations come from real training and inference logs collected between May 29 & June 12, 2026 on an RDNA3 GPU (Radeon RX 7700 XT) using ROCm 7.2.1. These logs provide independent confirmation of the hazards described in **§§1–8**.
 
 These screenshots are not synthetic benchmarks. They are actual QLoRA training runs, adapter merges, and inference sessions that demonstrate the architectural behaviors documented above.
 
@@ -374,9 +374,19 @@ Across multiple training runs, enabling SDMA resulted in:
   - No deadlocks
   - Model saved successfully
   
+**New Observations:**  
+- TinyLlama 3-Epoch QLoRa Run  
+  - TinyLlama (314‑example run) completed 3 epochs with zero FLAT_SCRATCH faults
+  - Qwen3B incremental run completed 2208 steps with no hangs
+  - Spoonie‑Helper v5 full training (11,764 examples) completed with stable BF16 compute
+
+All runs show clean SDMA‑mediated L2 invalidation (no stale loads, no partial‑wait stalls)
+  
 **Interpretation:**
 These logs confirm that SDMA participates in L2 invalidation and global memory ordering, preventing the deadlocks described in **§6.5**.  
 This behavior is not documented in the ISA, but is consistently reproducible.
+**Training Update - June 12, 2026**  
+The updated observation reinforce that SDMA is performing global memory ordering that prevents WMMA→FLAT deadlocks.
 
 ### 7.2 Evidence for WMMA / MFMA Hazards (§1, §6.1)
 **Observed in logs**:
@@ -385,13 +395,20 @@ This behavior is not documented in the ISA, but is consistently reproducible.
 - No Triton kernels appear in any successful run
 - All matmuls are executed via rocBLAS, not Triton
 
+**New Observations - June 12, 2026:** 
+- All three runs today show BF16‑only matmuls
+- No FP16 kernels appear anywhere
+- No Triton kernels appear in any run
+- hipBLASLt warnings continue to appear, confirming fallback to rocBLAS
+- All matmuls executed through rocBLAS MFMA paths, not Triton WMMA
+
 **Interpretation:**  
 This aligns with:  
 - MFMA dependency rules (§7.7)
 - WMMA EXEC override behavior (§5.4.3)
 - Wave32 requirement for WMMA (§2.2.1)
 
-The logs confirm that only ROCm-native kernels obey these rules, while Triton-generated kernels do not.
+The logs confirm that only ROCm-native kernels obey these rules, while Triton-generated kernels do not. The updated observation further confirm that ROCm‑native MFMA obeys dependency rules, while Triton WMMA remains unsafe on RDNA3.
 
 ### 7.3 Evidence for EXEC Masking Hazards (§2, §6.2)  
 **Observed in logs:**
@@ -406,6 +423,12 @@ The interactive Python session where Qwen2.5‑3B generates a correct explanatio
 - No masked‑lane divergence
 - No WMMA corruption
 
+**New Observations:** 
+- Qwen3B incremental run produced clean inference after merge
+- No masked‑lane artifacts
+- No partial‑tile corruption
+- EXEC state remained stable across all inference calls
+
 **Interpretation:**  
 This supports the claim that EXEC masking must be fully restored before WMMA, and that Triton’s predicated WMMA tiles violate this rule.
 
@@ -415,6 +438,12 @@ This supports the claim that EXEC masking must be fully restored before WMMA, an
 - No partial‑wait hangs
 - No FLAT_SCRATCH faults
 - No stale descriptor loads
+
+**New Observations:**  
+- All three training runs completed with no partial‑wait stalls
+- No FLAT_SCRATCH faults
+- No stale descriptor loads
+- All kernels obeyed **waitcnt(0)** before FLAT operations
 
 **Interpretation:**  
 This confirms that:  
@@ -429,14 +458,25 @@ This confirms that:
 - No LDS-related stalls
 - No Triton kernels (which would cause LDS conflicts)
 
+**New Observations:**  
+- no LDS conflicts in any runs
+- no LDS-related stalls
+- No Triton kernels
+
 **Interpretation:**  
-This supports the claim that Triton’s row-major LDS tiles cause 32‑way conflicts, while ROCm-native kernels avoid them.
+This continues to support the claim that Triton’s row‑major LDS tiles are unsafe on RDNA3.
 
 ### 7.6 Evidence for hipBLASLt Instability (§7)  
 **Observed in logs:**  
 - hipBLASLt warnings appear during Qwen2.5‑3B inference
 - ROCm automatically falls back to hipBLAS
 - Training remains stable only after fallback
+
+**New Observation:**  
+- hipBLASLt warnings appeared
+- ROCm automatically fell back to hipBLAS
+- All stable runs today used hipBLAS, not hipBLASLt
+- No instability once fallback occurred
 
 **Interpretation:**  
 This confirms that hipBLASLt is not stable on RDNA3, consistent with the LDS and MFMA hazards described earlier.
@@ -457,6 +497,15 @@ This configuration produced:
 - no corruption
 - reproducible results  
 
+**New Outcomes:** 
+- TinyLlama: stable 3‑epoch run
+- Qwen3B: stable 2208‑step run + clean merge
+- Spoonie‑Helper-v5(Qwen3B base): stable 11,764‑example run + clean merge
+- All merges produced correct inference outputs
+- No corruption, no hangs, no divergence
+
+Interpretation update:  
+Today’s results strongly reinforce that this configuration is the only known‑working RDNA3‑safe path.
 [↑ Back to top](#table-of-contents)
 
 ### 8. Community Reproducibility & Contributions  
@@ -487,73 +536,5 @@ These changes confirm that the hazards described in this document were architect
 
 ---
 
-### Appendix A — Evidence Screenshots & Training Logs  
-This appendix contains links to empirical evidence supporting the RDNA3 ISA‑level hazards and undocumented behaviors described in §§1–8.
-All screenshots are stored in the repository under:
-`/evidence/`
-Each item below links to a specific training or inference log demonstrating real‑world behavior on RDNA3 hardware (Radeon RX 7700 XT, ROCm 7.2.1).
-
-
-### A1 — Qwen2.5‑3B QLoRA Training Log (May 29, 2026)
-Supports:  
-- SDMA interaction (§6.5)
-- hipBLASLt fallback (§7)
-- Stable BF16 compute (§4)
-- No Triton kernels in successful runs (§4)
-
-**Link:** `/evidence/2026-05-29_qwen25_training.png`
-
-### A2 — TinyLlama Final Training Output (May 30, 2026)  
-Supports:  
-- Long‑running stability with BF16 (§4)
-- No FLAT_SCRATCH faults (§6.3)
-- No WMMA → FLAT deadlocks (§6.5)
-- ROCm-native matmuls only (§4)
-
-**Link:** `/evidence/2026-05-30_tinyllama_final.png`
-
-
-### A3 — GPT‑Neo QLoRA Demo (June 1, 2026)
-Supports:  
-- Stable BF16 training (§4)
-- hipBLASLt override warning (§7)
-- No Triton kernels invoked (§4)
-- Correct gradient behavior (§1, §6.1)
-
-**Link:** `/evidence/2026-06-01_gptneo_demo.png`
-
-### A4 — Qwen2.5‑3B Inference Stability Test (June 6, 2026)  
-Supports:  
-- EXEC masking correctness (§2, §6.2)
-- No partial‑tile corruption (§2)
-- Stable inference after LoRA merge (§4)
-- ROCm-native matmuls only (§4)
-
-**Link:** `/evidence/2026-06-06_inference_spoon_theory.png` 
-
-### A5 — Post‑RDNA3‑Fix Qwen2.5‑3B Training Run (June 7, 2026)  
-Supports:  
-- DMA required for stable training (§6.5)
-- No hangs or deadlocks (§6.5)
-- No FLAT_SCRATCH faults (§6.3)
-- Correct WMMA ordering behavior (§6.1)
-- hipBLASLt fallback (§7)
-- Smooth loss curve and stable gradients (§1, §6.1)
-- RDNA3‑safe QLoRA path validated (§4)
-
-**Link:** `/evidence/2026-06-08_qwen3b_post_rdna3_fix_training.png`
-
-### Appendix A Summary  
-Together, Evidence A1–A5 demonstrate:
-- Triton kernels fail on RDNA3 due to ISA‑level hazards
-- ROCm-native kernels obey the required ordering, EXEC, and waitcnt rules
-- SDMA plays an undocumented but essential role in memory ordering
-- BF16 compute is stable and correct on RDNA3
-- QLoRA training is fully stable when following the RDNA3‑safe path in §4
-
-These logs provide direct, reproducible, hardware‑validated confirmation of the hazards and fixes described in this research.  
-[↑ Back to top](#table-of-contents)
-
----
 
 

@@ -1,0 +1,11 @@
+{
+  "model": "/home/jg18/Project/Qlora/models/qwen-base",
+  "dataset": "/home/jg18/Project/Qlora/data/ada.jsonl",
+  "dataset_size": 11764,
+  "max_seq_length": 2048,
+  "train_loss": null,
+  "learning_rate": 0.0002,
+  "batch_size": 2,
+  "grad_accum": 8,
+  "epoch": 3.0
+}
