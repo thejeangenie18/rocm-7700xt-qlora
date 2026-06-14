@@ -260,7 +260,7 @@ Supports:
 - Clean LoRA‑adapter export with no serialization errors (§4.2)
 - Proper handling of small‑batch, high‑throughput dataset mapping (§2.4)
 
-**Screenshots:**
+**Screenshots:**  
 ![A terminal window shows a TinyLlama QLoRA training script running, with dataset loading, deprecation warnings, iterative loss and learning‑rate metrics, and a final summary reporting runtime and saved adapter weights.](../evidence/2026-06-12-tinyllama.png)  
 **Alt Text:**  
 A terminal window shows a TinyLlama QLoRA training script running, with dataset loading, deprecation warnings, iterative loss and learning‑rate metrics, and a final summary reporting runtime and saved adapter weights.  
