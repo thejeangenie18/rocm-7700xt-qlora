@@ -281,7 +281,7 @@ Supports
 - Deprecation warnings surfaced for future Transformers changesntrospection confirm the chain pipeline is functioning exactly as designed after the CPU fix rollout.
 
 **Screenshot:**  
-![A terminal window shows a QLoRA training script (`chain_train.py`) running on an AMD RDNA3 system. The log displays system info, dataset stats, GPU memory usage, and early training metrics, including a warning about tensor alignment and several loss values.](.../evidence/2026-06-13-qwen-pre.png)  
+![A terminal window shows a QLoRA training script (`chain_train.py`) running on an AMD RDNA3 system. The log displays system info, dataset stats, GPU memory usage, and early training metrics, including a warning about tensor alignment and several loss values.](../evidence/2026-06-13-qwen-pre.png)  
 **Alt Text:**  
 A terminal window shows a QLoRA training script `chain_train.py` running on an AMD RDNA3 system. The log displays system info, dataset stats, GPU memory usage, and early training metrics, including a warning about tensor alignment and several loss values.  
 **Image Description:**  
@@ -303,7 +303,7 @@ Supports:
 - Confirmed completion of Qwen_Incremental stage
 
 **Screenshot:**  
-![A terminal window displays the final stage of a QLoRA training run, showing multiple loss and gradient‑norm entries, final training statistics, and messages confirming that post‑training snapshots and the LoRA adapter were saved successfully.](.../evidence/2026-06-13-qwen-post.png)  
+![A terminal window displays the final stage of a QLoRA training run, showing multiple loss and gradient‑norm entries, final training statistics, and messages confirming that post‑training snapshots and the LoRA adapter were saved successfully.](../evidence/2026-06-13-qwen-post.png)  
 **Alt Text:**  
 A terminal window displays the final stage of a QLoRA training run, showing multiple loss and gradient‑norm entries, final training statistics, and messages confirming that post‑training snapshots and the LoRA adapter were saved successfully.  
 **Image Description:**  
@@ -322,7 +322,7 @@ Supports:
 - Final enumerated list of all failed validations, confirming zero passes
 
 **Screenshot:**  
-![A terminal window shows a failed run of the QWEN Model Validation Suite. Multiple validation tests report errors caused by a missing torch.datetime attribute, and the final summary indicates 13 failed checks with an overall status of FAIL.](.../evidence/2026-06-13-qwen-fail.png)  
+![A terminal window shows a failed run of the QWEN Model Validation Suite. Multiple validation tests report errors caused by a missing torch.datetime attribute, and the final summary indicates 13 failed checks with an overall status of FAIL.](../evidence/2026-06-13-qwen-fail.png)  
 **Alt Text:**  
 A terminal window shows a failed run of the QWEN Model Validation Suite. Multiple validation tests report errors caused by a missing torch.datetime attribute, and the final summary indicates 13 failed checks with an overall status of FAIL.  
 **Image Description:**  
@@ -343,7 +343,7 @@ Supports:
 - JSON training‑argument summary written without errors
 
 **Screenshot:**  
-![A terminal window shows a TinyLlama QLoRA training run. The log includes dataset loading, alignment warnings, deprecation notices, step‑by‑step loss values, gradient norms, learning rates, final training metrics, and messages confirming that snapshots and the LoRA adapter were saved.](.../evidence/2026-06-13-tinyllama.png)  
+![A terminal window shows a TinyLlama QLoRA training run. The log includes dataset loading, alignment warnings, deprecation notices, step‑by‑step loss values, gradient norms, learning rates, final training metrics, and messages confirming that snapshots and the LoRA adapter were saved.](../evidence/2026-06-13-tinyllama.png)  
 **Alt Text:**  
 A terminal window shows a TinyLlama QLoRA training run. The log includes dataset loading, alignment warnings, deprecation notices, step‑by‑step loss values, gradient norms, learning rates, final training metrics, and messages confirming that snapshots and the LoRA adapter were saved.  
 **Image Description:**  
