@@ -689,8 +689,6 @@ Optional but recommended:
 
 ### 10.12 Memory & IO Behavior Before vs After Fixes
 
-## Table 4 — Memory & IO Behavior Before vs After CPU Environmental Fixes
-
 | Metric | Pre‑Fix (06/10–06/12) | Post‑Fix (06/13) | Improvement |
 |--------|------------------------|------------------|-------------|
 | **VRAM Used (Qwen)** | ~7.4 GB | ~7.5 GB | ≈ Same |
