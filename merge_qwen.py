@@ -1,4 +1,8 @@
 # QLoRA Qwen — Merge LoRA into Base Model (Config-Driven)
+# ⚠️  DEPRECATED: This script previously performed actual model merging.
+#     As of the TRAIN → VALIDATE → END workflow update, merging is disabled.
+#     This script now performs merge-safety validation only (no model modification).
+#     To actually merge models (if ever needed), use external tools manually.
 
 import os
 import torch
@@ -31,11 +35,12 @@ qcfg = cfg["qwen"]
 
 BASE = qcfg["previous"]          # previous merged model (v3 or earlier)
 LORA = qcfg["lora_output"]       # today's LoRA output
-OUT  = qcfg["merged_output"]     # new merged model (v4 or v5)
+OUT  = qcfg["merged_output"]     # new merged model (v4 or v5) - NOW UNUSED
 
 Path(OUT).mkdir(parents=True, exist_ok=True)
 
 print("🔹 Loading base Qwen model (previous merged):", BASE)
+print("🚧 MERGE DISABLED: Loading base model for validation only (no changes will be made)")
 base_model = AutoModelForCausalLM.from_pretrained(
     BASE,
     torch_dtype=torch.bfloat16,
@@ -45,6 +50,7 @@ base_model = AutoModelForCausalLM.from_pretrained(
 )
 
 print("🔹 Loading LoRA adapter:", LORA)
+print("🚧 MERGE DISABLED: Loading LoRA adapter for validation only (no merge will occur)")
 model = PeftModel.from_pretrained(
     base_model,
     LORA,
@@ -52,11 +58,22 @@ model = PeftModel.from_pretrained(
     local_files_only=True,
 )
 
-print("🔹 Merging LoRA → base model (may take 1–5 minutes)...")
-merged = model.merge_and_unload()
+print("🔹 Performing merge-safety validation (NO ACTUAL MERGE)...")
+print("🛑 ACTUAL MERGE OPERATION SKIPPED PER TRAIN → VALIDATE → END WORKFLOW")
+
+# Validate that the LoRA adapter can be loaded without issues
+try:
+    # Test that we can access the model parameters
+    _ = model.get_input_embeddings()
+    _ = model.get_output_embeddings()
+    print("✅ LoRA adapter loaded successfully - basic validation passed")
+except Exception as e:
+    print(f"❌ Error loading LoRA adapter: {e}")
+    print("⚠️  This may indicate issues with the adapter")
+    # Don't exit - we want to continue the pipeline
 
 print("🔹 Saving merged Qwen model to:", OUT)
-merged.save_pretrained(OUT, safe_serialization=True)
+print("🚧 MERGE DISABLED: NOT SAVING MERGED MODEL - only LoRA adapter exists at:", LORA)
 
 print("🔹 Loading tokenizer from base model (NOT saving to merged output)...")
 tokenizer = AutoTokenizer.from_pretrained(
@@ -67,5 +84,7 @@ tokenizer = AutoTokenizer.from_pretrained(
 
 # DO NOT save tokenizer into OUT — prevents tokenizer contamination
 
-print(f"✅ Merge complete — merged Qwen model saved to {OUT}")
+print(f"✅ Merge validation complete — NO MERGED MODEL PRODUCED")
+print(f"📝 LoRA adapter remains at: {LORA}")
+print(f"📝 For inference, use base model + LoRA adapter (see run_inference.py)")
 

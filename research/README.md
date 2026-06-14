@@ -505,7 +505,7 @@ This configuration produced:
 - No corruption, no hangs, no divergence
 
 Interpretation update:  
-Today’s results strongly reinforce that this configuration is the only known‑working RDNA3‑safe path.
+These results strongly reinforce that this configuration is the only known‑working RDNA3‑safe path.  
 [↑ Back to top](#table-of-contents)
 
 ### 8. Community Reproducibility & Contributions  
@@ -533,6 +533,95 @@ Let's give the RDNA3 line the collective love it deserves!
 - Triton backend emits fewer RDNA3‑unsafe kernels  
 
 These changes confirm that the hazards described in this document were architectural rather than user‑error or environment‑related. Sections 4, 6, and 7 will be updated to reflect the improved behavior under ROCm 7.2.4.
+
+### 10. Zen 3 / Ryzen 5700X3D CPU Environmental Fixes
+*(Stability Requirements for QLoRA, FlashAttention, and RDNA3‑Safe Training)*  
+
+The **Ryzen 5700X3D** behaves extremely well under ML workloads *only after* a specific set of CPU‑side environmental fixes are applied. These fixes eliminate early‑epoch crashes, scheduler stalls, and non‑deterministic behavior that previously appeared during Qwen and TinyLlama training. These fixes were applied after going through the **AMD RYZEN™ PROCESSOR SOFTWARE OPTIMIZATION** pdf guide provided by AMD. 
+
+This section documents the **minimal, reproducible CPU configuration** required for stable training on Zen 3 + RDNA3.
+
+### 10.1 Why CPU Fixes Matter on Zen 3  
+RDNA3 instability is not *only* a GPU‑side issue. The PDF logs show that RDNA3’s hazards (WMMA dependency bubbles, EXEC masking, FLAT waitcnt rules) interact badly with:  
+- Linux CPU power‑saving states
+- Aggressive frequency scaling
+- IOMMU translation overhead
+- PCIe ASPM latency penalties
+- Scheduler jitter during high‑throughput dataloading  
+
+These CPU‑side behaviors amplify GPU‑side hazards, causing hangs, corrupt gradients, or early termination.
+
+The fixes below eliminate those interactions.
+
+### 10.2 Required BIOS-Level Fixes
+- **Disable Global C‑States:** prevents frequency‑collapse stalls during GPU kernel dispatch
+- **Disable ASPM:** removes PCIe link‑state latency that destabilizes RDNA3 SDMA
+- **Disable Spread Spectrum:** avoids clock jitter during long matmul bursts
+- **Enable SVM / IOMMU:** required for ROCm correctness
+- **Enable IOMMU = Enabled (not Auto):** ensures deterministic DMA mapping
+- **Set fTPM = CPU fTPM:** avoids firmware‑level latency spikes
+- **Set DRAM to XMP / 3200:** stable memory timing for dataloader throughput  
+
+These settings directly align with the RDNA3‑safe path described in the BEATEK / ROCm Fixes.
+
+### 10.3 Required Kernel Parameters
+Add the following to GRUB:
+`amd_iommu=on iommu=pt pcie_aspm=off processor.max_cstate=1`  
+Effects: 
+- `iommu=pt` → reduces DMA translation overhead
+- `pcie_aspm=off` → prevents link‑state power transitions mid‑kernel
+- `max_cstate=1` → locks CPU to stable C1/C0, eliminating latency spikes
+
+### 10.4 Required Runtime Settings
+- **CPU Governor** = performance
+- **EPP** = performance
+- **NVMe scheduler** = none
+- **WiFi power‑save** = off
+- **THP** = madvise
+
+These settings ensure the CPU never downclocks during RDNA3‑heavy workloads.
+
+### 10.5 Observed Effects After Applying Fixes 
+- Training no longer crashes in early epochs
+- Loss curves stabilize (Qwen: 0.15 → 0.10 approaching epoch 3)
+- ROCm SMI snapshots remain consistent
+- No SDMA stalls
+- No scheduler jitter during dataloader mapping
+- LoRA adapters export cleanly
+- Validation suite runs to completion (even when failing for unrelated reasons)
+
+### 10.6 Relationship to RDNA3 ISA Hazards
+The PDF highlights several GPU‑side hazards:
+- WMMA → WMMA dependency bubble (ISA §5.4)
+- WMMA ignores EXEC masking (ISA §5.4.3)
+- FLAT requires full s_waitcnt vmcnt(0) lgkmcnt(0)
+-  SMEM partial waits are invalid
+- Wave64 hazards (WDPD, SGPR aliasing)
+
+CPU instability amplifies these hazards by:
+- Interrupting kernel dispatch
+- Causing partial waits to misfire
+- Triggering SDMA desync
+- Increasing nondeterministic gradient behavior
+
+The CPU fixes eliminate these amplification vectors.
+
+### 10.7 Minimal Zen 3 / 5700X3D Stable Configuration
+Required:
+- BIOS: C‑States off, ASPM off, SVM on, IOMMU on, Spread Spectrum off
+- Kernel: `amd_iommu=on iommu=pt pcie_aspm=off processor.max_cstate=1`
+- Runtime: performance governor, EPP performance, THP madvise
+
+Optional but recommended:
+- Disable Cool’n’Quiet
+- Disable ErP
+- Lock DRAM to XMP Profile 1
+
+### 10.8 Validation Evidence
+- **A13:** Stable qwen run after CPU fixes
+- **A13.1:** Clean final-epoch metrics, no stalls
+- **A13.2:** Validation suite completes (fails for unrelated reasons)
+- **A14:** Tinyllama epochs run cleanly across all 3 passes
 
 ---
 

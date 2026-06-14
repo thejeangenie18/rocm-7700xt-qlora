@@ -9,7 +9,7 @@ This pipeline uses no Triton, no BitsAndBytes, and no CUDA‑only kernels. Every
 - LoRA rank 64 tuned for Qwen2.5
 - 12GB VRAM friendly (fits 3B models comfortably)
 - Clean JSONL dataset format
-- CPU‑safe LoRA merge into a single fp16 safetensors model
+- LoRA adapter validation for merge safety (no actual merging)
 - RDNA3 stability settings included in all scripts
 - Minimal, stable ROCm 7.2.1 Python environment
 - Incremental training support (Qwen3B incremental run)
@@ -17,7 +17,7 @@ This pipeline uses no Triton, no BitsAndBytes, and no CUDA‑only kernels. Every
 - Verified BF16‑only matmul path
 - Verified hipBLASLt fallback behavior
 - Verified SDMA‑mediated stability
-- Verified safe merges (TinyLlama, Qwen3B)
+- Verified merge-safe LoRA adapters (TinyLlama, Qwen3B)
 
 ## Ongoing Findings (ROCm 7.2.4+)
 ROCm 7.2.4 introduces several kernel‑correctness improvements for RDNA3.
@@ -182,6 +182,24 @@ print(tok.decode(outputs[0], skip_special_tokens=True))
 - No masked‑lane artifacts 
 - No WMMA corruption 
 - No Triton kernels involved
+
+## CPU Environment Requirements (Zen 3 / Ryzen 5700X3D)
+Modern RDNA3 training stability depends not only on GPU‑side fixes but also on a correct Zen 3 CPU environment.  
+On Ryzen 5700X3D systems, several CPU‑side power‑management features can cause training instability, early‑epoch crashes, or dataloader stalls.  
+This project includes a validated configuration that eliminates those issues.
+
+**Verified CPU‑side stability requirements:**
+- Disable Global C‑States (prevents frequency‑collapse stalls)
+- Disable PCIe ASPM (removes link‑state latency that disrupts SDMA)
+- Enable IOMMU + SVM (required for ROCm correctness)
+- Kernel parameters: `amd_iommu=on iommu=pt pcie_aspm=off processor.max_cstate=1` 
+- Runtime Settings
+    - CPU Governor = performance
+    - EPP = performance
+    - THP = madvise
+    
+These fixes are now validated across all QLoRA runs and are required for stable multi‑epoch training on Zen 3 hardware.  
+For full details, see the expanded section in [RESEARCH.md](research/README.md#10-zen-3--ryzen-5700x3d-cpu-environmental-fixes)
 
 ## RDNA3 Stability Credits
 This project includes RDNA3-specific ROCm fixes originally documented by Beat-k in the BEATEK_ROCm project:

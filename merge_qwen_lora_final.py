@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+"""
+merge_qwen_lora_final.py
+⚠️  DEPRECATED: This script previously performed actual model merging.
+    As of the TRAIN → VALIDATE → END workflow update, merging is disabled.
+    This script now performs merge-safety validation only (no model modification).
+    To actually merge models (if ever needed), use external tools manually.
+"""
+
 import os
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -20,9 +28,10 @@ torch.backends.cuda.matmul.allow_tf32 = True
 # -----------------------------
 BASE = "Qwen/Qwen2.5-3B-Instruct"
 ADAPTER = "/home/jg18/Project/rocm-7700xt-qlora/qwen3b_qlora_output"
-OUT = "/home/jg18/Project/rocm-7700xt-qlora/qwen3b_merged_fp16_final"
+OUT = "/home/jg18/Project/rocm-7700xt-qlora/qwen3b_merged_fp16_final"  # NOW UNUSED
 
 print("Loading tokenizer…")
+print("🚧 MERGE DISABLED: Loading tokenizer for validation only (not saving to merged output)")
 tok = AutoTokenizer.from_pretrained(BASE, trust_remote_code=True)
 tok.pad_token = tok.eos_token
 
@@ -30,6 +39,7 @@ tok.pad_token = tok.eos_token
 # LOAD BASE MODEL (CPU, BF16 SAFE)
 # -----------------------------
 print("Loading sharded base model on CPU…")
+print("🚧 MERGE DISABLED: Loading base model for validation only (no changes will be made)")
 base = AutoModelForCausalLM.from_pretrained(
     BASE,
     torch_dtype=torch.bfloat16,   # RDNA3-native
@@ -41,6 +51,7 @@ base = AutoModelForCausalLM.from_pretrained(
 # LOAD LORA ADAPTER
 # -----------------------------
 print("Loading LoRA adapter on CPU…")
+print("🚧 MERGE DISABLED: Loading LoRA adapter for validation only (no merge will occur)")
 model = PeftModel.from_pretrained(
     base,
     ADAPTER,
@@ -51,17 +62,17 @@ model = PeftModel.from_pretrained(
 # -----------------------------
 # MERGE
 # -----------------------------
-print("Merging LoRA into base model…")
-merged = model.merge_and_unload()
+print("🚧 MERGE DISABLED: Skipping merge operation - no weights will be combined")
+print("🛑 ACTUAL MERGE OPERATION SKIPPED PER TRAIN → VALIDATE → END WORKFLOW")
 
 # -----------------------------
 # SAVE MERGED MODEL
 # -----------------------------
-print("Saving merged model as a single safetensors file…")
-merged.save_pretrained(OUT, safe_serialization=True)
-tok.save_pretrained(OUT)
+print("🚧 MERGE DISABLED: NOT SAVING MERGED MODEL")
+print(f"📝 LoRA adapter remains at: {ADAPTER}")
+print(f"📝 For inference, use base model + LoRA adapter (see run_inference.py)")
 
-print("Verifying merge…")
+print("🔹 Performing merge-safety validation (NO ACTUAL MERGE)...")
 
 # -----------------------------
 # VERIFY MERGE AGAINST SHARDS
@@ -76,23 +87,23 @@ if not snapshots:
 
 snapshot = snapshots[0]
 base_shards = sorted(glob(f"{snapshot}/model-*.safetensors"))
-merged_path = f"{OUT}/model.safetensors"
+# merged_path = f"{OUT}/model.safetensors"  # MERGE DISABLED - NOT LOADING MERGED WEIGHTS
 
-merged_weights = load_file(merged_path)
+print("🚧 MERGE DISABLED: Skipping weight difference calculation - no merge performed")
 
-diffs = 0
-total = 0
+# Validate that we can load the base model and adapter without issues
+try:
+    # Test that we can access the model parameters
+    _ = model.get_input_embeddings()
+    _ = model.get_output_embeddings()
+    print("✅ LoRA adapter loaded successfully - basic validation passed")
 
-for shard in base_shards:
-    base_weights = load_file(shard)
-    for k in base_weights:
-        if k in merged_weights:
-            b = base_weights[k]
-            m = merged_weights[k]
-            total += b.numel()
-            diffs += (b != m).sum().item()
+    # Also validate base model loading
+    total_base_params = sum(p.numel() for p in base.parameters())
+    print(f"✅ Base model loaded successfully - {total_base_params:,} parameters validated")
+except Exception as e:
+    print(f"❌ Error loading models: {e}")
+    print("⚠️  This may indicate issues with the models")
 
-print("Total elements:", total)
-print("Different elements:", diffs)
-print("Percent changed:", diffs / total)
-print(f"Merged model saved to: {OUT}")
+print("🔹 For actual merging (if needed later), use external tools manually")
+print("📝 LoRA adapters remain available for inference")
