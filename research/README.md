@@ -55,6 +55,21 @@ A full before/after comparison and updated training‑run logs will be added as 
 - [7. Empirical Evidence From Training & Inference Logs](#7-empirical-evidence-from-training--inference-logs)
 - [8. Community Reproducibility & Contributions](#8-community-reproducibility--contributions)
 - [9. ROCm 7.2.4 Update](#9-rocm-724-update)
+
+- [10. Zen 3 / Ryzen 5700X3D CPU Environmental Fixes](#10-zen-3--ryzen-5700x3d-cpu-environmental-fixes)
+  - [10.1 Why CPU Fixes Matter on Zen 3](#101-why-cpu-fixes-matter-on-zen-3)
+  - [10.2 Required BIOS-Level Fixes](#102-required-bios-level-fixes)
+  - [10.3 Required Kernel Parameters](#103-required-kernel-parameters)
+  - [10.4 Required Runtime Settings](#104-required-runtime-settings)
+  - [10.5 Observed Effects After Applying Fixes](#105-observed-effects-after-applying-fixes)
+  - [10.6 Relationship to RDNA3 ISA Hazards](#106-relationship-to-rdna3-isa-hazards)
+  - [10.7 Minimal Zen 3 / 5700X3D Stable Configuration](#107-minimal-zen-3--5700x3d-stable-configuration)
+  - [10.8 Validation Evidence](#108-validation-evidence)
+  - [10.9 Before vs After CPU Environmental Fixes (Zen 3 / Ryzen 5700X3D)](#109-before-vs-after-cpu-environmental-fixes-zen-3--ryzen-5700x3d)
+  - [10.10 RDNA3 GPU Hazard Profile Before vs After CPU Environmental Fixes](#1010-rdna3-gpu-hazard-profile-before-vs-after-cpu-environmental-fixes)
+  - [10.11 CPU & Dataloader Behavior Before vs After CPU Environmental Fixes](#1011-cpu--dataloader-behavior-before-vs-after-cpu-environmental-fixes)
+  - [10.12 Memory & IO Behavior Before vs After Fixes](#1012-memory--io-behavior-before-vs-after-fixes)
+
 - [Appendix A — Evidence (Screenshots, Logs, Traces)](./appendix-a.md)
 
 ---
