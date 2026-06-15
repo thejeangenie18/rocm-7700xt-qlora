@@ -308,4 +308,3 @@ Listen to what we find.
 
 ---
 
-*Jillian Taylor is a Deaf accessibility advocate and public-sector operations professional with the City & County of Denver (DOTI). Outside of work, they are an independent ML hobbyist and the creator of the ongoing Spoonie Helper project, a community-first accessibility and assistive-technology initiative built on consumer AMD hardware. Their RDNA3 ISA research, including documented findings on WMMA hazards, memory-fence behavior, and silent-failure modes in ROCm training pipelines, is available at [github.com/thejeangenie18/rocm-7700xt-qlora](https://github.com/thejeangenie18/rocm-7700xt-qlora). More of their work lives at [jg18.dev](https://jg18.dev).*
