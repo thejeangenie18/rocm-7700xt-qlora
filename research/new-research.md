@@ -4,9 +4,7 @@
 
 With Empirical Evidence from RDNA3 ISA Research · ML Training Logs · Healthcare Systems Analysis
 
-**Jillian**
-
-jg@jg18.dev · jg18.dev · Denver, CO
+jg@jg18.dev · jg18.dev · Somewhere in a pipeline
 
 June 2026
 

@@ -1,5 +1,7 @@
 # I Didn't Start Out Trying to Build an Accessibility-Aware AI
 
+By: JG18 jg@jg18.dev June 14th, 2026
+
 I didn't start out trying to build an accessibility-aware AI. I started with AI at work by experimenting, learning, trying to understand how these systems behave in real workflows. But the more I used them, the more obvious it became that none of this technology was built for people like me.
 
 I'm Deaf, autistic, ADHD, and hypermobile. My communication patterns, my access needs, my executive-function challenges are variables that do not fit the "default user" AI companies imagine.
