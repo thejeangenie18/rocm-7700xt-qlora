@@ -202,8 +202,15 @@ These fixes are now validated across all QLoRA runs and are required for stable 
 For full details, see the expanded section in [RESEARCH.md](research/README.md#10-zen-3--ryzen-5700x3d-cpu-environmental-fixes)
 
 ## RDNA3 Stability Credits
-This project includes RDNA3-specific ROCm fixes originally documented by Beat-k in the BEATEK_ROCm project:
-https://github.com/Beat-k/BEATEK_ROCm
+This project includes RDNA3-specific ROCm fixes originally documented by Beat-k in the BEATEK_ROCm project:  
+[BEATEK_ROCm](https://github.com/Beat-k/BEATEK_ROCm)
+
+## Research Impact & Further Context  
+The RDNA3 kernel‑level findings documented in this repository—silent numerical corruption, WMMA dependency hazards, LDS visibility issues, and memory‑model inconsistencies—directly informed my public article on AI brittleness in healthcare. The same architectural patterns that cause silent failures in ML kernels also appear in real clinical AI workflows, where they manifest as inaccessible, unreliable, or unsafe system behavior.
+
+Expanded analysis:  
+[AI Brittleness, Accessibility, and Why Healthcare Must Slow Down](https://www.linkedin.com/pulse/ai-brittleness-accessibility-why-healthcare-must-slow-jillian-taylor-00yhc/)
+
 
 ## License
 MIT for repository code.
