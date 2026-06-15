@@ -211,6 +211,9 @@ The RDNA3 kernel‑level findings documented in this repository—silent numeric
 Expanded analysis:  
 [AI Brittleness, Accessibility, and Why Healthcare Must Slow Down](https://www.linkedin.com/pulse/ai-brittleness-accessibility-why-healthcare-must-slow-jillian-taylor-00yhc/)
 
+Additional research:  
+[Better for People, Better for Machines: Accessibility Benefits Everyone](./research/new-research.md)
+
 
 ## License
 MIT for repository code.

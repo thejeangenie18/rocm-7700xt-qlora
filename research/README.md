@@ -1,6 +1,6 @@
 # Triton‑Generated Kernels Produce Incorrect Results or Stalls on RDNA3 Due to ISA‑Level Hazards
 
-This research is ongoing. All findings are based on real workloads, but the dataset is still small and will expand as training continues. Community contributions and independent verification are encouraged. Contact:<a href="mailto:jg@jg18.dev">jg@jg18.dev</a>
+This research is ongoing. All findings are based on real workloads, but the dataset is still small and will expand as training continues. Community contributions and independent verification are encouraged. Contact: <a href="mailto:jg@jg18.dev">jg@jg18.dev</a>
 
 ## Summary  
 This document catalogs the RDNA3‑specific ISA rules that Triton‑generated kernels currently violate. These violations lead to:  
@@ -70,6 +70,9 @@ A full before/after comparison and updated training‑run logs will be added as 
   - [10.11 CPU & Dataloader Behavior Before vs After CPU Environmental Fixes](#1011-cpu--dataloader-behavior-before-vs-after-cpu-environmental-fixes)
   - [10.12 Memory & IO Behavior Before vs After Fixes](#1012-memory--io-behavior-before-vs-after-fixes)
 
+- [Related Documents](#related-documents)
+  - [Healthcare AI Article: Accessibility-Structured Prompts and Healthcare AI Brittleness](#healthcare-ai-article-accessibility-structured-prompts-and-healthcare-ai-brittleness)
+  - [Research Write-up: Better for People, Better for Machines, Accessibility Benefits Everyone](#research-write-up-better-for-people-better-for-machines-accessibility-benefits-everyone)
 - [Appendix A — Evidence (Screenshots, Logs, Traces)](./appendix-a.md)
 
 ---
@@ -716,6 +719,16 @@ Optional but recommended:
 | **IO Wait** | 0% | 0% | — |
 | **Allocator fragmentation** | Possible | None | ✔ |
 | **Overall memory behavior** | High variance | Stable | ✔ Major |
+
+## Related Documents
+
+For additional context and related work, see:
+
+- [Healthcare AI Article: Accessibility-Structured Prompts and Healthcare AI Brittleness](healthcare-ai.md)
+  - A LinkedIn article discussing how accessibility-structured prompts reveal AI brittleness in healthcare systems, connecting RDNA3 ISA research to real-world clinical AI workflows.
+
+- [Research Write-up: Better for People, Better for Machines, Accessibility Benefits Everyone](new-research.md)
+  - A comprehensive research write-up demonstrating how accessibility improvements benefit both human users and machine systems, with empirical evidence from RDNA3 ISA research and ML training logs.
 
 ---
 
