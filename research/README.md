@@ -559,7 +559,6 @@ These changes confirm that the hazards described in this document were architect
 
 **Empirical Validation — First 7.2.4 Training Run** 
 A full QLoRA session was executed on Qwen‑2.5‑Coder‑3B using a 27,224‑line code dataset, with LoRA rank 64 and NF4 quantization.
-This run was monitored and analyzed by the local engineering assistant model, marking the first self‑assisted engineering workflow in this project.
 
 Key results:  
 - Loss Start: 0.7183
