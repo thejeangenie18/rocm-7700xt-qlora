@@ -417,13 +417,144 @@ The RDNA3 parallel: the hazards documented in this research were only discoverab
 
 ---
 
-## §10 Conclusion: The Constraint That Makes Everything Else Work
+## §10 Accessibility‑Structured Documents Produce Exceptionally Clean Training Data (WhatSock Case Study)  
 
-Accessibility is the constraint that eliminates the largest categories of downstream cost. It is not a burden on the budget - it is the discipline that protects it. And across six domains of evidence, the finding is not ambiguous: early accessibility investment produces compounding returns; deferred accessibility produces compounding debt. The only difference between the two outcomes is when the decision is made.
+During the development of a personal engineering assistant model, I generated a 78‑record JSONL dataset from a 52‑page WhatSock accessibility training PDF. The document was printed to PDF with headers/backgrounds removed and processed using Microsoft's 365 Office Agent Frontier’s dataset‑extraction workflow.
 
-Healthcare portals that embedded accessibility from the design phase saw reduced call volume, better patient adherence, and cleaner audit trails. Enterprise software teams that built accessible from the start saw fewer defects, faster cycles, and lower maintenance costs. UX-focused organizations saw higher task completion, higher satisfaction, and measurable revenue gains. AI/ML pipelines fed structured, accessible content achieved 40-75% fewer extraction errors. Government services that planned for accessibility upfront delivered better vendor outcomes and avoided retrofits that would have consumed the entire project margin.
+**Key Result:**  
+Frontier produced a fully valid dataset with 0 JSON errors, no hallucinated ARIA attributes, and no invented patterns.  
+All extracted code snippets were verbatim from the source material.  
 
-The pattern does not change across sectors. The mechanism is always the same: structure reduces error, and accessibility enforces structure.
+This is a strong empirical demonstration of a broader principle:  
+`Accessibility patterns are inherently machine‑readable because they are deterministic, hierarchical, and semantically explicit.` 
+
+**Dataset Summary**  
+- Total records: 78
+- REPAIR: 15
+- CRITIQUE: 15
+- SYNTHESIS: 18
+- EXPLANATION: 30
+- Validation errors: 0
+
+**Patterns Successfully Extracted**
+
+Frontier extracted 30+ WhatSock patterns, including:  
+- ARIA Checkbox (simulated control)
+- Native checkbox accessibility tree mapping
+- Invalid ARIA Menu structures
+- Misuse of `role="textbox"`
+- Toggle button state patterns (`aria-pressed`)
+- Drag‑and‑drop semantics (`aria-grabbed`, `aria-describedby`)
+- `role="application"` misuse
+- Region labeling (`aria-label`, `aria-labelledby`)
+- Scrollable region rules
+- Live region variants (`aria-live`, `aria-atomic`, `aria-relevant`)
+- Offscreen text patterns
+- Simulated button keyboard interaction rules
+- `aria-activedescendant` for Listbox/Menu
+- Compound widget constraints
+- AT‑specific behavior (NVDA, JAWS, VoiceOver, ZoomText)
+- Accessibility Tree vs DOM precedence
+- Drag‑and‑drop offscreen button technique
+
+**Why This Matters**  
+This dataset demonstrates that accessibility‑aligned engineering content produces exceptionally clean machine‑learning training material.  
+The structure enforced by WhatSock patterns:  
+- reduces ambiguity
+- eliminates hallucination risk
+- improves extraction fidelity
+- increases reasoning quality
+- produces deterministic training examples
+
+This supports the broader thesis of this research:
+`**Accessibility is not only beneficial for end‑users — it also improves AI behavior because accessibility is structure.**`
+
+**Implications for Model Training**
+
+This dataset is now part of the training corpus for the personal engineering assistant model.
+Expected benefits include:  
+- improved ARIA reasoning
+- correct pattern synthesis
+- accurate markup repair
+- reduced hallucination of attributes/roles
+- better cross‑AT behavior modeling
+- stronger structural reasoning overall
+
+This is the first empirical confirmation that accessibility‑structured documents can serve as **high‑quality, low‑noise training material** for small, local models.
+
+### 10.1 Original Prompt (Reproducibility Reference)
+
+To maintain transparency and allow independent verification of the extraction workflow, the full prompt used to generate the dataset is included here:  
+[WhatSock Frontier Extraction Prompt](whatsock.prompt.md)
+
+While the source PDF cannot be shared due to licensing and distribution restrictions, the prompt itself is sufficient for readers to understand the extraction method, the expected behavior, and the structure of the resulting dataset.
+
+### 10.2 Evidence Screenshots
+
+The following screenshots document the extraction fidelity and dataset quality produced by Frontier.
+They serve as empirical support for the claims made in this section and illustrate how accessibility‑structured documents behave under automated dataset generation.
+
+---
+
+1. Extraction Task Definition — Strict, Deterministic, No‑Hallucination Constraints
+
+[A dark‑themed terminal window displays instructions for converting a 52‑page WhatSock accessibility training PDF into JSONL training data. The text emphasizes strict rules about not adding GPU‑specific code, not inventing examples, and extracting only what appears in the PDF. It outlines how to generate repair and critique samples using a fixed instruction‑input‑output schema.](../evidence/2026-06-17-prompt.png)  
+**Alt Text:**  
+A dark‑themed terminal window displays instructions for converting a 52‑page WhatSock accessibility training PDF into JSONL training data. The text emphasizes strict rules about not adding GPU‑specific code, not inventing examples, and extracting only what appears in the PDF. It outlines how to generate repair and critique samples using a fixed instruction‑input‑output schema.  
+**Image Description:**  
+The image shows a dark‑themed computer screen containing a block of instructional text for an accessibility‑focused data‑extraction task. The text explains that the user must convert a 52‑page WhatSock training PDF into JSONL training data for a coding‑assistant model, following a strict schema with “instruction,” “input,” and “output” fields. The instructions stress that no CUDA, Triton, FlashAttention, GPU logic, device maps, training code, or optimization code may be introduced, and that no examples, ARIA attributes, or code may be invented. The text states that all output must be deterministic and must come directly from the PDF. It then describes the first two categories of training samples to generate: repair samples, which require fixing accessibility issues in code snippets taken from the PDF and returning corrected code with a short explanation, and critique samples, which require listing accessibility issues in a snippet and explaining why each issue matters. The visible portion ends mid‑sentence as it continues describing the critique sample format.
+
+2. Automated PDF Parsing and JSONL Conversion Sequence
+
+[A dark‑themed interface labeled “Office Agent” shows an automated workflow that parses a WhatSock accessibility PDF, extracts patterns, converts them into JSONL training data, and executes several Python commands. The interface displays step‑by‑step logs, file reads, and a final message indicating the task is complete.](../evidence/2026-06-17-prompt2.png)  
+**Alt Text:**  
+A dark‑themed interface labeled “Office Agent” shows an automated workflow that parses a WhatSock accessibility PDF, extracts patterns, converts them into JSONL training data, and executes several Python commands. The interface displays step‑by‑step logs, file reads, and a final message indicating the task is complete.  
+**Image Description:**  
+The image shows a dark‑themed screen titled “Office Agent,” presenting a sequence of automated steps for processing accessibility training material. The interface displays a series of status messages describing how the system parses a WhatSock accessibility PDF, extracts patterns, and converts them into JSONL training data. Several lines show Python commands being executed, including reading intermediate files such as `pdf_content.txt` and running small inline scripts to process extracted text. The interface shows each stage completing successfully as the agent moves through parsing, chunking, extraction, and conversion. At the bottom of the screen, three rectangular buttons appear: one labeled “Convert into workflow,” another labeled “Expand coverage to more ARIA patterns,” and a third labeled “Analyze training data quality and balance.” The sequence ends with a confirmation that the task has completed.
+
+3. Automated JSONL Generation and Validation Sequence
+
+[A dark‑themed interface shows an automated workflow generating and validating a JSONL dataset from extracted WhatSock accessibility patterns. The screen displays file creation steps, Python command execution, validation messages confirming all records are correct, and a final summary of dataset counts.](../evidence/2026-06-17-prompt3.png)  
+**Alt Text:**  
+A dark‑themed interface shows an automated workflow generating and validating a JSONL dataset from extracted WhatSock accessibility patterns. The screen displays file creation steps, Python command execution, validation messages confirming all records are correct, and a final summary of dataset counts.  
+**Image Description:**  
+The image shows a dark‑themed screen displaying an automated sequence of steps for generating and validating JSONL training data. The interface reports that it is creating two files named `todo.md` and `gen_jsonl.py`, then running a Python script to produce the dataset. After generation, the system executes another Python command to verify that all JSONL records are valid, followed by a spot‑check of sample entries from each training‑sample type. The log confirms that all seventy‑eight records pass validation. The interface then rewrites the todo.md file and states that the dataset `whatsock_training.jsonl` is ready. At the bottom, a small summary table appears, showing the total number of records and the counts for repair, critique, synthesis, and explanation samples. The screen ends with a clear indication that the dataset creation process has completed successfully.
+
+4. Extracted Pattern Summary and Sample-Type Breakdown
+
+[A dark‑themed interface displays a table summarizing dataset counts for four accessibility‑training sample types, followed by a numbered list of ARIA and accessibility patterns extracted from a PDF. Buttons at the bottom offer options to convert the process into a workflow, expand coverage, or analyze data quality.](../evidence/2026-06-17-prompt4.png)  
+**Alt Text:**  
+A dark‑themed interface displays a table summarizing dataset counts for four accessibility‑training sample types, followed by a numbered list of ARIA and accessibility patterns extracted from a PDF. Buttons at the bottom offer options to convert the process into a workflow, expand coverage, or analyze data quality.  
+**Image Description:**  
+The image shows a dark‑themed screen presenting a small table that lists the number of training samples generated for each category: repair samples, critique samples, synthesis samples, explanation samples, and a row confirming zero JSON validation errors. Beneath the table is a heading indicating that the patterns were extracted exclusively from the PDF, followed by a long numbered list of accessibility and ARIA patterns. The list includes issues such as simulated checkboxes missing required roles, incorrect ARIA menu markup, misuse of roles like textbox and application, labeling requirements for regions, live region behaviors, offscreen text techniques, simulated button interactions, and ARIA menu behaviors involving aria-haspopup and aria-activedescendant. At the bottom of the interface, three rectangular buttons appear, labeled “Convert into workflow,” “Expand coverage to more ARIA patterns,” and “Analyze training data quality and balance.” The overall layout shows a completed extraction process with a clear summary of the dataset and the specific accessibility patterns it covers.
+
+5. Advanced Accessibility Pattern Extraction (Items 15–30)
+
+[A dark‑themed interface displays items 15 through 30 of an accessibility and ARIA pattern list, covering topics such as simulated buttons, ARIA menus, live region behaviors, assistive‑technology differences, and drag‑and‑drop techniques. A note at the bottom states that all code snippets come directly from the PDF with nothing invented.](../evidence/2026-06-17-prompt5.png)  
+**Alt Text:**  
+A dark‑themed interface displays items 15 through 30 of an accessibility and ARIA pattern list, covering topics such as simulated buttons, ARIA menus, live region behaviors, assistive‑technology differences, and drag‑and‑drop techniques. A note at the bottom states that all code snippets come directly from the PDF with nothing invented.  
+**Image Description:**  
+The image shows a dark‑themed screen containing the continuation of a numbered list of accessibility and ARIA patterns, beginning at item fifteen and ending at item thirty. The visible entries describe a range of advanced interaction and assistive‑technology behaviors, including simulated button activation using onClick and onKeyDown, ARIA menu patterns involving aria-haspopup and aria-activedescendant, live region configurations such as aria-relevant set to “removals,” and differences in how NVDA handles focus and click events for ARIA radio buttons. Additional items reference aria-activedescendant usage in listboxes, aria-pressed states on toggle buttons, compound component rules, offscreen text techniques for pseudo roles inside gridcells, live region caveats for auto‑rotating carousels, and one‑tab‑stop design patterns for complex widgets. The list also includes platform‑specific behaviors such as VoiceOver on iOS triggering focus and blur events through touch, JAWS differences between Virtual Cursor and Applications or Forms Mode, and ZoomText limitations with aria-label and aria-labelledby. The final entries mention the precedence of the Accessibility Tree compared to the DOM, the use of role="document" inside role="application," and an associated drag‑and‑drop technique that uses an offscreen button. At the bottom, a short note states that all code snippets are taken directly from the PDF and that no ARIA attributes, examples, or requirements were invented.
+
+6. JSONL Dataset View - Verbatim Extraction and Balanced Sample Types
+
+[A dark‑themed code editor displays a JSONL training file with columns for instruction, input, and output. The visible entries contain accessibility and ARIA tasks extracted from a WhatSock PDF, including repair, critique, implementation, and explanation prompts. Dataset statistics appear at the top, showing counts and percentages for each instruction type.](../evidence/2026-17-dataset.png)  
+**Alt Text:**  
+A dark‑themed code editor displays a JSONL training file with columns for instruction, input, and output. The visible entries contain accessibility and ARIA tasks extracted from a WhatSock PDF, including repair, critique, implementation, and explanation prompts. Dataset statistics appear at the top, showing counts and percentages for each instruction type.  
+**Image Description:**  
+The image shows a dark‑themed code editor open to a file named “whatsock_training.jsonl.” The editor displays the file in a tabular view with columns labeled instruction, input, and output. Each row represents a JSONL training record derived from the WhatSock accessibility training PDF. The visible entries include tasks such as fixing accessibility issues in code, listing issues and explaining their impact, implementing ARIA checkboxes, menus, labeled inputs, drag‑and‑drop components, scrollable regions, and live regions, as well as explaining why specific ARIA roles, states, and structural rules are required. The top of the interface shows dataset statistics, including percentages for each instruction type and a total count of seventy‑eight records. The screen conveys a structured, validated dataset intended for training an accessibility‑aware coding assistant, with all examples sourced directly from the PDF.
+
+---
+
+## §11 Conclusion: The Constraint That Makes Everything Else Work
+
+Accessibility is the constraint that eliminates the largest categories of downstream cost. It is not a burden on the budget, it is the discipline that protects it. And across every domain examined in this research, the finding is consistent: early accessibility investment produces compounding returns; deferred accessibility produces compounding debt. The only difference between the two outcomes is when the decision is made.
+
+Healthcare portals that embedded accessibility from the design phase saw reduced call volume, better patient adherence, and cleaner audit trails. Enterprise software teams that built accessibly from the start saw fewer defects, faster cycles, and lower maintenance costs. UX‑focused organizations saw higher task completion, higher satisfaction, and measurable revenue gains. Government services that planned for accessibility upfront delivered better vendor outcomes and avoided retrofits that would have consumed the entire project margin.
+
+And now, with the WhatSock → Frontier → JSONL case study, the same pattern is visible in AI systems. A 52‑page accessibility‑structured document produced a perfectly clean dataset: 78 records, zero validation errors, no hallucinated attributes, and no invented patterns. The reason is the same mechanism observed everywhere else: accessibility enforces structure, and structure is what makes machine reasoning reliable. When content is deterministic, hierarchical, and semantically explicit, AI systems extract it cleanly, interpret it correctly, and behave predictably.
+
+The pattern does not change across sectors. The mechanism is always the same: **structure reduces error, and accessibility enforces structure.**
 
 ### 10.1 The RDNA3 Closing Frame
 
