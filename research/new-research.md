@@ -2,7 +2,7 @@
 
 ## Why Accessibility Improves AI Behavior
 
-With Empirical Evidence from RDNA3 ISA Research · ML Training Logs · Healthcare Systems Analysis
+With Empirical Evidence from RDNA3 ISA Research, ML Training Logs, WhatSock Accessibility Patterns, and Healthcare Systems Analysis  
 
 jg@jg18.dev · jg18.dev · Somewhere in a pipeline
 
@@ -32,31 +32,27 @@ Accessibility-first design · WCAG compliance · ambiguity reduction · AI/ML st
 
 ## Table of Contents
 
-- **[§1 Introduction – The Argument in Full](ca://s?q=Go_to_section_1_Introduction)**
-- **[§2 The Retrofit Tax – Why Deferred Accessibility Always Costs More](ca://s?q=Go_to_section_2_Retrofit_Tax)**
-- **[§3 Accessibility as Structure – Semantic Markup as Shared Infrastructure](ca://s?q=Go_to_section_3_Accessibility_as_Structure)**
-- **[§4 Structure Is Signal – How Accessibility Improves AI Behavior](ca://s?q=Go_to_section_4_Structure_Is_Signal)**
-- **[§5 The Economic Case – Quantified Returns Across Six Domains](ca://s?q=Go_to_section_5_Economic_Case)**
-- **[§6 Real‑World Evidence – Healthcare, Engineering, and Government](ca://s?q=Go_to_section_6_Real_World_Evidence)**
-- **[§7 Hardware as Proof – RDNA3 ISA and the Ambiguity Penalty](ca://s?q=Go_to_section_7_Hardware_as_Proof)**
-- **[§8 AI Brittleness in Clinical Contexts – When Silent Failures Meet Healthcare](ca://s?q=Go_to_section_8_AI_Brittleness)**
-- **[§9 A Framework for Oversight – Policy as Instruction Set](ca://s?q=Go_to_section_9_Framework_for_Oversight)**
+- [§1 Introduction – The Argument in Full](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#1-introduction-the-argument-in-full)
+- [§2 The Retrofit Tax – Why Deferred Accessibility Always Costs More](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#2-the-retrofit-tax-why-deferred-accessibility-always-costs-more)
+- [§3 Accessibility as Structure – Semantic Markup as Shared Infrastructure](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#3-accessibility-as-structure-semantic-markup-as-shared-infrastructure)
+- [§4 Structure Is Signal – How Accessibility Improves AI Behavior](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#4-structure-is-signal-how-accessibility-improves-ai-behavior)
+- [§5 The Economic Case – Quantified Returns Across Six Domains](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#5-the-economic-case-quantified-returns-across-six-domains)
+- [§6 Real‑World Evidence – Healthcare, Engineering, and Government](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#6-real-world-evidence-healthcare-engineering-and-government)
+- [§7 Hardware as Proof – RDNA3 ISA and the Ambiguity Penalty](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#7-hardware-as-proof-rdna3-isa-and-the-ambiguity-penalty)
+- [§8 AI Brittleness in Clinical Contexts – When Silent Failures Meet Healthcare](#https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#8-ai-brittleness-in-clinical-contexts-when-silent-failures-meet-healthcare)
+- [§9 A Framework for Oversight – Policy as Instruction Set](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#9-a-framework-for-oversight-policy-as-instruction-set)
 
 ### Section 10 (Expanded)
 
-- **[§10 Conclusion – The Constraint That Makes Everything Else Work](ca://s?q=Go_to_section_10_Conclusion)**
-  - **[§10.1 Original Prompt (Reproducibility Reference)](ca://s?q=Go_to_section_10_1_Original_Prompt)**
-  - **[§10.2 Evidence Screenshots](ca://s?q=Go_to_section_10_2_Evidence_Screenshots)**
-    - **[Extraction Task Definition — Strict, Deterministic, No‑Hallucination Constraints](ca://s?q=Go_to_screenshot_1)**
-    - **[Automated PDF Parsing and JSONL Conversion Sequence](ca://s?q=Go_to_screenshot_2)**
-    - **[Automated JSONL Generation and Validation Sequence](ca://s?q=Go_to_screenshot_3)**
-    - **[Extracted Pattern Summary and Sample‑Type Breakdown](ca://s?q=Go_to_screenshot_4)**
-    - **[Advanced Accessibility Pattern Extraction (Items 15–30)](ca://s?q=Go_to_screenshot_5)**
-    - **[JSONL Dataset View – Verbatim Extraction and Balanced Sample Types](ca://s?q=Go_to_screenshot_6)**
+- [§10 Conclusion – The Constraint That Makes Everything Else Work](#https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#10-accessibilitystructured-documents-produce-exceptionally-clean-training-data-whatsock-case-study)
+  - [§10.1 Original Prompt (Reproducibility Reference)](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#101-original-prompt-reproducibility-reference)
+  - [§10.2 Evidence Screenshots](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#102-evidence-screenshots)
 
-- **[References](ca://s?q=Go_to_References)**
-- **[Appendix A – Empirical Evidence: RDNA3 Training Logs](ca://s?q=Go_to_Appendix_A)**
+- [References](#references)
+- [Appendix A – Empirical Evidence: RDNA3 Training Logs](#appendix-a--empirical-evidence-rdna3-training-logs)
+
 </nav>
+
 ---
 
 ## §1 Introduction: The Argument in Full
@@ -551,7 +547,7 @@ The image shows a dark‑themed screen containing the continuation of a numbered
 
 6. JSONL Dataset View - Verbatim Extraction and Balanced Sample Types
 
-![A dark‑themed code editor displays a JSONL training file with columns for instruction, input, and output. The visible entries contain accessibility and ARIA tasks extracted from a WhatSock PDF, including repair, critique, implementation, and explanation prompts. Dataset statistics appear at the top, showing counts and percentages for each instruction type.](../evidence/2026-17-dataset.png)  
+![A dark‑themed code editor displays a JSONL training file with columns for instruction, input, and output. The visible entries contain accessibility and ARIA tasks extracted from a WhatSock PDF, including repair, critique, implementation, and explanation prompts. Dataset statistics appear at the top, showing counts and percentages for each instruction type.](../evidence/2026-06-17-dataset.png)  
 **Alt Text:**  
 A dark‑themed code editor displays a JSONL training file with columns for instruction, input, and output. The visible entries contain accessibility and ARIA tasks extracted from a WhatSock PDF, including repair, critique, implementation, and explanation prompts. Dataset statistics appear at the top, showing counts and percentages for each instruction type.  
 **Image Description:**  
