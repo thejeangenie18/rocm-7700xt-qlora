@@ -543,7 +543,7 @@ Let's give the RDNA3 line the collective love it deserves!
 
 ### 9. ROCm 7.2.4 Update  - June 17, 2026  
 ROCm 7.2.4 introduces kernel‑correctness and backend‑stability improvements that directly align with the RDNA3 ISA‑level hazards documented in earlier sections.
-Empirical validation was performed using a Qwen‑2.5‑Coder‑3B LoRA training run, assisted by the in‑development local engineering assistant model (Qwen‑2.5‑3B‑Instruct LoRA).
+Empirical validation was performed using a Qwen‑2.5‑Coder‑3B LoRA training run.
 This marks the first end‑to‑end confirmation that the architectural hazards identified in §§3–7 have been addressed.
 
 **Architectural Fixes (from AMD release behavior)**  
