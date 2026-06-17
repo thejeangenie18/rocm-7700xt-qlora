@@ -435,7 +435,7 @@ Frontier produced a fully valid dataset with 0 JSON errors, no hallucinated ARIA
 All extracted code snippets were verbatim from the source material.  
 
 This is a strong empirical demonstration of a broader principle:  
-`Accessibility patterns are inherently machine‑readable because they are deterministic, hierarchical, and semantically explicit.` 
+**Accessibility patterns are inherently machine‑readable because they are deterministic, hierarchical, and semantically explicit.** 
 
 **Dataset Summary**  
 - Total records: 78
@@ -475,8 +475,8 @@ The structure enforced by WhatSock patterns:
 - increases reasoning quality
 - produces deterministic training examples
 
-This supports the broader thesis of this research:
-`**Accessibility is not only beneficial for end‑users — it also improves AI behavior because accessibility is structure.**`
+This supports the broader thesis of this research:  
+**Accessibility is not only beneficial for end‑users: it also improves AI behavior because accessibility is structure.**
 
 **Implications for Model Training**
 
