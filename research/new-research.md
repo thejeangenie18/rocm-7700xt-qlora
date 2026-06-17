@@ -494,7 +494,7 @@ This is the first empirical confirmation that accessibility‑structured documen
 ### 10.1 Original Prompt (Reproducibility Reference)
 
 To maintain transparency and allow independent verification of the extraction workflow, the full prompt used to generate the dataset is included here:  
-[WhatSock Frontier Extraction Prompt](whatsock.prompt.md)
+[WhatSock Frontier Extraction Prompt](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/whatsock-prompt.md)
 
 While the source PDF cannot be shared due to licensing and distribution restrictions, the prompt itself is sufficient for readers to understand the extraction method, the expected behavior, and the structure of the resulting dataset.
 
