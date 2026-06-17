@@ -511,7 +511,7 @@ They serve as empirical support for the claims made in this section and illustra
 
 1. Extraction Task Definition — Strict, Deterministic, No‑Hallucination Constraints
 
-[A dark‑themed terminal window displays instructions for converting a 52‑page WhatSock accessibility training PDF into JSONL training data. The text emphasizes strict rules about not adding GPU‑specific code, not inventing examples, and extracting only what appears in the PDF. It outlines how to generate repair and critique samples using a fixed instruction‑input‑output schema.](../evidence/2026-06-17-prompt.png)  
+![A dark‑themed terminal window displays instructions for converting a 52‑page WhatSock accessibility training PDF into JSONL training data. The text emphasizes strict rules about not adding GPU‑specific code, not inventing examples, and extracting only what appears in the PDF. It outlines how to generate repair and critique samples using a fixed instruction‑input‑output schema.](../evidence/2026-06-17-prompt.png)  
 **Alt Text:**  
 A dark‑themed terminal window displays instructions for converting a 52‑page WhatSock accessibility training PDF into JSONL training data. The text emphasizes strict rules about not adding GPU‑specific code, not inventing examples, and extracting only what appears in the PDF. It outlines how to generate repair and critique samples using a fixed instruction‑input‑output schema.  
 **Image Description:**  
@@ -519,7 +519,7 @@ The image shows a dark‑themed computer screen containing a block of instructio
 
 2. Automated PDF Parsing and JSONL Conversion Sequence
 
-[A dark‑themed interface labeled “Office Agent” shows an automated workflow that parses a WhatSock accessibility PDF, extracts patterns, converts them into JSONL training data, and executes several Python commands. The interface displays step‑by‑step logs, file reads, and a final message indicating the task is complete.](../evidence/2026-06-17-prompt2.png)  
+![A dark‑themed interface labeled "Office Agent" shows an automated workflow that parses a WhatSock accessibility PDF, extracts patterns, converts them into JSONL training data, and executes several Python commands. The interface displays step‑by‑step logs, file reads, and a final message indicating the task is complete.](../evidence/2026-06-17-prompt2.png)  
 **Alt Text:**  
 A dark‑themed interface labeled “Office Agent” shows an automated workflow that parses a WhatSock accessibility PDF, extracts patterns, converts them into JSONL training data, and executes several Python commands. The interface displays step‑by‑step logs, file reads, and a final message indicating the task is complete.  
 **Image Description:**  
@@ -527,7 +527,7 @@ The image shows a dark‑themed screen titled “Office Agent,” presenting a s
 
 3. Automated JSONL Generation and Validation Sequence
 
-[A dark‑themed interface shows an automated workflow generating and validating a JSONL dataset from extracted WhatSock accessibility patterns. The screen displays file creation steps, Python command execution, validation messages confirming all records are correct, and a final summary of dataset counts.](../evidence/2026-06-17-prompt3.png)  
+![A dark‑themed interface shows an automated workflow generating and validating a JSONL dataset from extracted WhatSock accessibility patterns. The screen displays file creation steps, Python command execution, validation messages confirming all records are correct, and a final summary of dataset counts.](../evidence/2026-06-17-prompt3.png)  
 **Alt Text:**  
 A dark‑themed interface shows an automated workflow generating and validating a JSONL dataset from extracted WhatSock accessibility patterns. The screen displays file creation steps, Python command execution, validation messages confirming all records are correct, and a final summary of dataset counts.  
 **Image Description:**  
@@ -535,7 +535,7 @@ The image shows a dark‑themed screen displaying an automated sequence of steps
 
 4. Extracted Pattern Summary and Sample-Type Breakdown
 
-[A dark‑themed interface displays a table summarizing dataset counts for four accessibility‑training sample types, followed by a numbered list of ARIA and accessibility patterns extracted from a PDF. Buttons at the bottom offer options to convert the process into a workflow, expand coverage, or analyze data quality.](../evidence/2026-06-17-prompt4.png)  
+![A dark‑themed interface displays a table summarizing dataset counts for four accessibility‑training sample types, followed by a numbered list of ARIA and accessibility patterns extracted from a PDF. Buttons at the bottom offer options to convert the process into a workflow, expand coverage, or analyze data quality.](../evidence/2026-06-17-prompt4.png)  
 **Alt Text:**  
 A dark‑themed interface displays a table summarizing dataset counts for four accessibility‑training sample types, followed by a numbered list of ARIA and accessibility patterns extracted from a PDF. Buttons at the bottom offer options to convert the process into a workflow, expand coverage, or analyze data quality.  
 **Image Description:**  
@@ -543,7 +543,7 @@ The image shows a dark‑themed screen presenting a small table that lists the n
 
 5. Advanced Accessibility Pattern Extraction (Items 15–30)
 
-[A dark‑themed interface displays items 15 through 30 of an accessibility and ARIA pattern list, covering topics such as simulated buttons, ARIA menus, live region behaviors, assistive‑technology differences, and drag‑and‑drop techniques. A note at the bottom states that all code snippets come directly from the PDF with nothing invented.](../evidence/2026-06-17-prompt5.png)  
+![A dark‑themed interface displays items 15 through 30 of an accessibility and ARIA pattern list, covering topics such as simulated buttons, ARIA menus, live region behaviors, assistive‑technology differences, and drag‑and‑drop techniques. A note at the bottom states that all code snippets come directly from the PDF with nothing invented.](../evidence/2026-06-17-prompt5.png)  
 **Alt Text:**  
 A dark‑themed interface displays items 15 through 30 of an accessibility and ARIA pattern list, covering topics such as simulated buttons, ARIA menus, live region behaviors, assistive‑technology differences, and drag‑and‑drop techniques. A note at the bottom states that all code snippets come directly from the PDF with nothing invented.  
 **Image Description:**  
@@ -551,7 +551,7 @@ The image shows a dark‑themed screen containing the continuation of a numbered
 
 6. JSONL Dataset View - Verbatim Extraction and Balanced Sample Types
 
-[A dark‑themed code editor displays a JSONL training file with columns for instruction, input, and output. The visible entries contain accessibility and ARIA tasks extracted from a WhatSock PDF, including repair, critique, implementation, and explanation prompts. Dataset statistics appear at the top, showing counts and percentages for each instruction type.](../evidence/2026-17-dataset.png)  
+![A dark‑themed code editor displays a JSONL training file with columns for instruction, input, and output. The visible entries contain accessibility and ARIA tasks extracted from a WhatSock PDF, including repair, critique, implementation, and explanation prompts. Dataset statistics appear at the top, showing counts and percentages for each instruction type.](../evidence/2026-17-dataset.png)  
 **Alt Text:**  
 A dark‑themed code editor displays a JSONL training file with columns for instruction, input, and output. The visible entries contain accessibility and ARIA tasks extracted from a WhatSock PDF, including repair, critique, implementation, and explanation prompts. Dataset statistics appear at the top, showing counts and percentages for each instruction type.  
 **Image Description:**  
