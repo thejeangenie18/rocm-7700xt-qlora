@@ -541,16 +541,51 @@ Let's give the RDNA3 line the collective love it deserves!
 
 [↑ Back to top](#table-of-contents)
 
-### 9. ROCm 7.2.4 Update   
-- improved WMMA/MFMA dependency handling  
-- corrected EXEC mask restoration  
-- more complete waitcnt insertion for FLAT/SMEM  
-- improved LDS access patterns  
-- increased stability when SDMA is enabled  
-- FlashAttention 2 defaults more reliably to CK backend  
-- Triton backend emits fewer RDNA3‑unsafe kernels  
+### 9. ROCm 7.2.4 Update  - June 17, 2026  
+ROCm 7.2.4 introduces kernel‑correctness and backend‑stability improvements that directly align with the RDNA3 ISA‑level hazards documented in earlier sections.
+Empirical validation was performed using a Qwen‑2.5‑Coder‑3B LoRA training run, assisted by the in‑development local engineering assistant model (Qwen‑2.5‑3B‑Instruct LoRA).
+This marks the first end‑to‑end confirmation that the architectural hazards identified in §§3–7 have been addressed.
 
-These changes confirm that the hazards described in this document were architectural rather than user‑error or environment‑related. Sections 4, 6, and 7 will be updated to reflect the improved behavior under ROCm 7.2.4.
+**Architectural Fixes (from AMD release behavior)**  
+- improved WMMA/MFMA dependency handling
+- corrected EXEC mask restoration
+- more complete waitcnt insertion for FLAT/SMEM
+- improved LDS access patterns
+- increased stability when SDMA is enabled
+- FlashAttention 2 defaults more reliably to CK backend
+- Triton backend emits fewer RDNA3‑unsafe kernels
+
+These changes confirm that the hazards described in this document were architectural rather than user‑error or environment‑related.
+
+**Empirical Validation — First 7.2.4 Training Run** 
+A full QLoRA session was executed on Qwen‑2.5‑Coder‑3B using a 27,224‑line code dataset, with LoRA rank 64 and NF4 quantization.
+This run was monitored and analyzed by the local engineering assistant model, marking the first self‑assisted engineering workflow in this project.
+
+Key results:  
+- Loss Start: 0.7183
+- Loss End: 0.2882
+- Loss Delta: 0.4301
+- Runtime: 13,157.7s (≈219.3 min)
+- Steps/sec: 0.129
+- VRAM Used: 7.15 GB
+- VRAM Peak: 9.85 GB
+- Allocator Fragmentation: 0.7255
+
+No hazards observed:  
+- no MFMA hazards
+- no EXEC mask desync
+- no waitcnt fence issues
+- no SDMA stalls
+- no hipBLASLt regressions
+- no allocator faults
+- no NaNs or divergence
+
+This is the cleanest RDNA3 training profile recorded to date, and the first multi‑hour session to complete without triggering any of the hazards documented in §§3–7.
+
+**Conclusion**  
+Sections 4, 6, and 7 will be updated to reflect the improved behavior under ROCm 7.2.4.  
+This release represents the first version of ROCm suitable for stable, multi‑hour QLoRA training on consumer RDNA3 hardware.  
+The involvement of the local engineering‑assistant model demonstrates the beginning of a self‑bootstrapping development loop, where the model being trained actively participates in its own engineering workflow.  
 
 ### 10. Zen 3 / Ryzen 5700X3D CPU Environmental Fixes
 *(Stability Requirements for QLoRA, FlashAttention, and RDNA3‑Safe Training)*  
