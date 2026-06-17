@@ -39,12 +39,12 @@ Accessibility-first design · WCAG compliance · ambiguity reduction · AI/ML st
 - [§5 The Economic Case – Quantified Returns Across Six Domains](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#5-the-economic-case-quantified-returns-across-six-domains)
 - [§6 Real‑World Evidence – Healthcare, Engineering, and Government](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#6-real-world-evidence-healthcare-engineering-and-government)
 - [§7 Hardware as Proof – RDNA3 ISA and the Ambiguity Penalty](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#7-hardware-as-proof-rdna3-isa-and-the-ambiguity-penalty)
-- [§8 AI Brittleness in Clinical Contexts – When Silent Failures Meet Healthcare](#https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#8-ai-brittleness-in-clinical-contexts-when-silent-failures-meet-healthcare)
+- [§8 AI Brittleness in Clinical Contexts – When Silent Failures Meet Healthcare](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#8-ai-brittleness-in-clinical-contexts-when-silent-failures-meet-healthcare)
 - [§9 A Framework for Oversight – Policy as Instruction Set](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#9-a-framework-for-oversight-policy-as-instruction-set)
 
 ### Section 10 (Expanded)
 
-- [§10 Conclusion – The Constraint That Makes Everything Else Work](#https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#10-accessibilitystructured-documents-produce-exceptionally-clean-training-data-whatsock-case-study)
+- [§10 Conclusion – The Constraint That Makes Everything Else Work](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#10-accessibilitystructured-documents-produce-exceptionally-clean-training-data-whatsock-case-study)
   - [§10.1 Original Prompt (Reproducibility Reference)](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#101-original-prompt-reproducibility-reference)
   - [§10.2 Evidence Screenshots](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#102-evidence-screenshots)
 
