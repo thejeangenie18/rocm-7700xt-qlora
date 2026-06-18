@@ -565,13 +565,13 @@ And now, with the WhatSock → Frontier → JSONL case study, the same pattern i
 
 The pattern does not change across sectors. The mechanism is always the same: **structure reduces error, and accessibility enforces structure.**
 
-### 10.1 The RDNA3 Closing Frame
+### 11.1 The RDNA3 Closing Frame
 
 The RDNA3 parallel holds here as a closing frame, not as metaphor, but as evidence. Just as RDNA3's compute units require structured, typed instruction streams to perform at rated throughput - dual-issue pipelines that degrade when instruction types are ambiguous - AI models and human readers alike require structured, accessible content to parse accurately and efficiently. The efficiency floor is set at the design phase. Ambiguity inserted at the authoring stage does not get resolved later; it propagates downstream and compounds.
 
 The twelve training runs documented in this research demonstrate this principle at the hardware level with empirical precision. The final stable configuration works not because it is clever, but because it is correct - because it provides typed, structured input to a system optimized for typed, structured input. The same is true of accessible design: it does not work because it is generous. It works because it is structurally sound. The constraint is not a limitation. It is the design pressure that produces better outcomes for every system that consumes the output.
 
-### 10.2 The Market Math and the Moral Arithmetic
+### 11.2 The Market Math and the Moral Arithmetic
 
 The market math closes the financial case. 1.3 billion people with disabilities, trillions in collective spending power, a 300%+ surge in accessibility lawsuits from 2018 to 2023, and a $350,000 average lawsuit cost before remediation - this is not a niche compliance risk manageable by a legal checkbox. It is the mainstream market reality, and it is accelerating as AI search tools increasingly penalize unstructured content at the discovery layer.
 
