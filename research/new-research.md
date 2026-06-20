@@ -44,7 +44,7 @@ Accessibility-first design · WCAG compliance · ambiguity reduction · AI/ML st
 
 ### Section 10 (Two Case Studies)
 
-- [§10 Accessibility‑Structured Documents Produce Exceptionally Clean Training Data](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#10-accessibility‑structured-documents-produce-exceptionally-clean-training-data)
+- [§10 Accessibility‑Structured Documents Produce Exceptionally Clean Training Data](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#10-accessibilitystructured-documents-produce-exceptionally-clean-training-data)
   - [§10.1 Original Prompt (Reproducibility Reference)](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#101-original-prompt-reproducibility-reference)
   - [§10.2 Evidence Screenshots](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#102-evidence-screenshots)
 - [§11  Accessibility Structures Improve LLM Determinism](https://github.com/thejeangenie18/rocm-7700xt-qlora/blob/main/research/new-research.md#11-accessibility-structures-improve-llm-determinism)
