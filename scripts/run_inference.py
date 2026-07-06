@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import argparse
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
@@ -15,18 +16,21 @@ torch.backends.cuda.matmul.allow_tf32 = True
 # -----------------------------
 # CONFIG
 # -----------------------------
-MODEL = "/home/jg18/Project/rocm-7700xt-qlora/qwen3b_merged_fp16_final"
-USE_GPU = False  # set True for GPU inference
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", default=os.getenv("MODEL_PATH", "./models/merged"),
+                    help="Path to merged model directory")
+parser.add_argument("--gpu", action="store_true", help="Use GPU inference (cuda:0)")
+args = parser.parse_args()
 
-device = "cuda:0" if USE_GPU else "cpu"
+device = "cuda:0" if args.gpu else "cpu"
 
-print("Loading tokenizer…")
-tokenizer = AutoTokenizer.from_pretrained(MODEL, trust_remote_code=True)
+print("Loading tokenizer...")
+tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token
 
-print(f"Loading merged model on {device} (bf16 compute)…")
+print(f"Loading merged model on {device} (bf16 compute)...")
 model = AutoModelForCausalLM.from_pretrained(
-    MODEL,
+    args.model,
     torch_dtype=torch.bfloat16,   # RDNA3-native
     device_map={"": device},
     trust_remote_code=True,

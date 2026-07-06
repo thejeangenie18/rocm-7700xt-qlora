@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
 validate_adapter.py
-RDNA3‑safe validation script for merged bf16/fp16 QLoRA models.
-Runs a set of prompts and logs outputs to JSONL.
+RDNA3-safe validation script for merged or adapter-loaded HuggingFace models.
+Runs a set of prompts across categories and logs outputs to JSONL.
 """
 
 import os
 import json
+import argparse
 import datetime
 from pathlib import Path
 import torch
@@ -22,10 +23,17 @@ os.environ["ROCM_FORCE_ENABLE_DP"] = "1"
 torch.backends.cuda.matmul.allow_tf32 = True
 
 # -----------------------------
-# Paths
+# ARGS
 # -----------------------------
-MODEL_PATH = "./qwen3b_merged_fp16_final"
-LOG_DIR = Path("./validation_logs")
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", default=os.getenv("MODEL_PATH", "./models/merged"),
+                    help="Path to merged model directory")
+parser.add_argument("--log_dir", default="./validation_logs",
+                    help="Directory for JSONL output logs")
+args = parser.parse_args()
+
+MODEL_PATH = args.model
+LOG_DIR = Path(args.log_dir)
 LOG_DIR.mkdir(exist_ok=True)
 
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -51,9 +59,9 @@ prompts = {
 }
 
 # -----------------------------
-# Load merged model (CPU, BF16 compute)
+# Load model (CPU, BF16 compute)
 # -----------------------------
-print("[INFO] Loading merged model on CPU (bf16 compute)…")
+print("[INFO] Loading model on CPU (bf16 compute)...")
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token

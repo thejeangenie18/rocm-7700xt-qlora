@@ -1,21 +1,21 @@
 """
 chain_train.py
-──────────────────────────────────────────────────────────────
-Generalized RDNA3-safe TRAIN → VALIDATE → END pipeline.
+Generalized RDNA3-safe TRAIN to VALIDATE to END pipeline.
 
-Define ANY number of training + validation stages and this script
-will run them in order:
+Define any number of training and validation stages in the PIPELINE list below,
+or pass a JSON config file via --config. The script will run them in order:
 
     1. Train model A
     2. Validate model A
     3. Train model B
     4. Validate model B
-    5. (optional) Train model C
-    6. (optional) Validate model C
+    5. (add more stages as needed)
 
-Perfect for Qwen → TinyLlama → (future models) with comprehensive validation.
+Works with any HuggingFace model; not tied to a specific architecture.
 """
 
+import argparse
+import json
 import subprocess
 import time
 from pathlib import Path
@@ -29,23 +29,21 @@ import os
 #   - "name": label for logs
 #   - "train_script": path to training script
 #   - "lora_out": directory expected after training
-#   - "validation_script": path to validation script (optional, defaults to validate_all.py)
+#   - "validation_script": path to validation script (optional)
+#   - "base_model": base model used for validation (optional; falls back to BASE_MODEL env var)
+#
+# Example:
+#   PIPELINE = [
+#       {
+#           "name": "My Model Stage 1",
+#           "train_script": "scripts/train_rdna3_fix.py",
+#           "lora_out": "loras/my-adapter",
+#           "validation_script": "tools/validate_all.py",
+#       },
+#   ]
 # ─────────────────────────────────────────────────────────────
 
-PIPELINE = [
-    {
-        "name": "Qwen Spoonie Helper",
-        "train_script": "training/train_spoonie.py",
-        "lora_out": Path("loras/spoonie-helper-v3-lora"),
-        "validation_script": "validate_all.py",
-    },
-    {
-        "name": "TinyLlama Helper",
-        "train_script": "training/tinyllama.py",
-        "lora_out": Path("loras/tinyllama-helper-v2-lora"),
-        "validation_script": "validate_all.py",
-    },
-]
+PIPELINE = []
 
 
 # ─────────────────────────────────────────────────────────────
@@ -69,19 +67,16 @@ def wait_for_output(path: Path, timeout=900) -> bool:
     return False
 
 
-def run_validation(base_model: str, lora_path: Path, validation_script: str = "validate_all.py") -> bool:
+def run_validation(base_model: str, lora_path: Path, validation_script: str = "tools/validate_all.py") -> bool:
     """Run validation on the trained LoRA adapter."""
     print(f"\n=== Running Validation ===")
 
-    # Use the validation script from the Qlora directory (shared)
-    validation_script_path = f"/home/jg18/Project/Qlora/{validation_script}"
-
-    if not os.path.exists(validation_script_path):
-        print(f"[WARNING] Validation script not found: {validation_script_path}")
+    if not os.path.exists(validation_script):
+        print(f"[WARNING] Validation script not found: {validation_script}")
         print("[INFO] Skipping validation - assuming success")
         return True
 
-    cmd = f"python {validation_script_path} --base_model {base_model} --adapter {lora_path}"
+    cmd = f"python {validation_script} --base_model {base_model} --adapter {lora_path}"
     result = run(cmd)
 
     if result == 0:
@@ -89,8 +84,8 @@ def run_validation(base_model: str, lora_path: Path, validation_script: str = "v
         return True
     else:
         print(f"[WARNING] Validation failed for {lora_path}")
-        print("[INFO] Continuing pipeline despite validation failure (as per TRAIN → VALIDATE → END workflow)")
-        return True  # Continue anyway - validation failures don't stop the pipeline
+        print("[INFO] Continuing pipeline despite validation failure (TRAIN to VALIDATE to END workflow)")
+        return True  # Continue regardless; validation failures do not stop the pipeline
 
 
 # ─────────────────────────────────────────────────────────────
@@ -98,20 +93,36 @@ def run_validation(base_model: str, lora_path: Path, validation_script: str = "v
 # ─────────────────────────────────────────────────────────────
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", default=None,
+                    help="Optional JSON file defining pipeline stages (overrides the PIPELINE list)")
+    args = ap.parse_args()
+
+    pipeline = PIPELINE
+
+    if args.config:
+        with open(args.config) as f:
+            pipeline = json.load(f)
+        print(f"Loaded pipeline config from: {args.config}")
+
+    if not pipeline:
+        print("[ERROR] No pipeline stages defined. Populate the PIPELINE list or pass --config.")
+        sys.exit(1)
+
     print("\n──────────────────────────────────────────────")
-    print(" RDNA3 Multi-Stage TRAIN → VALIDATE → END Trainer")
+    print(" RDNA3 Multi-Stage TRAIN to VALIDATE to END Trainer")
     print("──────────────────────────────────────────────\n")
 
-    # Get base model from config or environment
-    base_model = os.environ.get("BASE_MODEL", "NousResearch/Llama-2-7b-hf")
+    base_model = os.environ.get("BASE_MODEL", "")
 
-    for stage in PIPELINE:
-        name = stage["name"]
-        train_script = stage["train_script"]
-        lora_out = stage["lora_out"]
-        validation_script = stage.get("validation_script", "validate_all.py")
+    for stage in pipeline:
+        name              = stage["name"]
+        train_script      = stage["train_script"]
+        lora_out          = Path(stage["lora_out"])
+        validation_script = stage.get("validation_script", "tools/validate_all.py")
+        stage_base_model  = stage.get("base_model", base_model)
 
-        print(f"\n=== Stage: {name} — Training ===")
+        print(f"\n=== Stage: {name} - Training ===")
         if run(f"python {train_script}") != 0:
             print(f"[ERROR] Training failed for {name}. Aborting pipeline.")
             sys.exit(1)
@@ -121,14 +132,15 @@ def main():
             print(f"[ERROR] LoRA output missing for {name}. Aborting.")
             sys.exit(1)
 
-        # Run validation (but don't fail the pipeline on validation failure)
-        validation_passed = run_validation(base_model, lora_out, validation_script)
-        if not validation_passed:
-            print(f"[INFO] Validation indicated issues, but continuing pipeline as per TRAIN → VALIDATE → END workflow")
+        if stage_base_model:
+            run_validation(stage_base_model, lora_out, validation_script)
+        else:
+            print(f"[INFO] No base_model set for stage '{name}'; skipping validation.")
+            print("[INFO] Set BASE_MODEL env var or add 'base_model' to the stage config.")
 
-    print("\n=== All stages complete! ===")
-    print("[INFO] Pipeline followed TRAIN → VALIDATE → END workflow")
-    print("[INFO] No merged models were produced - only LoRA adapters are saved")
+    print("\n=== All stages complete. ===")
+    print("[INFO] Pipeline followed TRAIN to VALIDATE to END workflow.")
+    print("[INFO] No merged models were produced - only LoRA adapters are saved.")
 
 
 if __name__ == "__main__":
